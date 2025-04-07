@@ -6,7 +6,7 @@ namespace MovieINTEX.Models
     public class MovieRating
     {
         [Key]
-        public int user_id { get; set; }
+        public string user_id { get; set; }
 
         [ForeignKey("MovieTitle")]
         public int show_id { get; set; }

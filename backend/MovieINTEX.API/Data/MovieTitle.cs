@@ -6,7 +6,7 @@ namespace MovieINTEX.Models
     public class MovieTitle
     {
         [Key]
-        public int show_id { get; set; }
+        public string show_id { get; set; }
         [Required]
         public string? type { get; set; }
         public string? title { get; set; }
