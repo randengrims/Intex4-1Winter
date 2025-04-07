@@ -167,3 +167,4 @@
 /Users/spencerbullock/Desktop/Intex2/backend/MovieINTEX.API/obj/Debug/net8.0/MovieINTEX.API.pdb
 /Users/spencerbullock/Desktop/Intex2/backend/MovieINTEX.API/obj/Debug/net8.0/MovieINTEX.API.genruntimeconfig.cache
 /Users/spencerbullock/Desktop/Intex2/backend/MovieINTEX.API/obj/Debug/net8.0/ref/MovieINTEX.API.dll
+/Users/spencerbullock/Desktop/Intex2/backend/MovieINTEX.API/obj/Debug/net8.0/MovieINTEX.API.sourcelink.json
