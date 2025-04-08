@@ -3,13 +3,15 @@ import './App.css';
 import AdminMoviesPage from './pages/AdminMoviesPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import HomePage from './pages/HomePage';
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* <Route path='/' element={<LandingPage />} />
-        <Route path='/' element={<LoginPage />} /> */}
+        <Route path='/' element={<LandingPage />} />
+        <Route path='/login' element={<LoginPage />} />
         <Route path='/adminmovies' element={<AdminMoviesPage />} />
         <Route
           path='/privacypolicy'

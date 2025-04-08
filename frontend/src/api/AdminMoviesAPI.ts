@@ -16,7 +16,7 @@ export const fetchMoviesPaged = async (
 ): Promise<FetchMoviesResponse> => {
   try {
     const response = await fetch(
-      `${API_URL}/GetMoviesPaged?pageSize=${pageSize}&pageNum=${pageNum}`,
+      `${API_URL}/GetMovies?pageSize=${pageSize}&pageNum=${pageNum}`,
     );
     if (!response.ok) throw new Error('Failed to fetch movies');
 
