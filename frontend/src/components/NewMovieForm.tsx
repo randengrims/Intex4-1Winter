@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Movie } from '../types/Movie';
-import { addMovie } from '../api/MoviesAPI';
+import { addMovie } from '../api/AdminMoviesAPI';
 
 interface NewMovieFormProps {
   onSuccess: () => void;
@@ -84,7 +84,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
         Release Year:
         <input
           type='number'
-          name='category'
+          name='release_year'
           value={formData.release_year || ''}
           onChange={handleChange}
         />

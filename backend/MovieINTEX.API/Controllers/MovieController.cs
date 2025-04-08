@@ -15,14 +15,21 @@ namespace MovieINTEX.Controllers
             _movieContext = temp;
         }
 
-        // Get Movies (Distinct titles)
         [HttpGet("GetMovies")]
-        public IActionResult GetMovies()
+        public IActionResult GetMoviesPaged(int pageSize = 10, int pageNum = 1)
         {
-            // Return distinct genre types as a list of strings
-            var movies = _movieContext.movies_titles.ToList();
+            var totalNumMovies = _movieContext.movies_titles.Count();
 
-            return Ok(movies);
+            var movies = _movieContext.movies_titles
+                .Skip((pageNum - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return Ok(new
+            {
+                movies = movies,
+                totalNumMovies = totalNumMovies
+            });
         }
 
         // Get Ratings

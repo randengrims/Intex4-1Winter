@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Movie } from '../types/Movie';
-import { deleteMovie, fetchMovies } from '../api/MoviesAPI';
+import {
+  fetchMoviesPaged,
+  deleteMovie,
+} from '../api/AdminMoviesAPI';
 import Pagination from '../components/pagination';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
@@ -18,7 +21,7 @@ const AdminMoviesPage = () => {
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await fetchMovies(pageSize, pageNum);
+        const data = await fetchMoviesPaged(pageSize, pageNum);
         setMovies(data.movies);
         setTotalPages(Math.ceil(data.totalNumMovies / pageSize));
       } catch (err) {
@@ -65,7 +68,7 @@ const AdminMoviesPage = () => {
         <NewMovieForm
           onSuccess={() => {
             setShowForm(false);
-            fetchMovies(pageSize, pageNum).then((data) =>
+            fetchMoviesPaged(pageSize, pageNum).then((data) =>
               setMovies(data.movies),
             );
           }}
@@ -78,7 +81,7 @@ const AdminMoviesPage = () => {
           movie={editingMovie}
           onSuccess={() => {
             setEditingMovie(null);
-            fetchMovies(pageSize, pageNum).then((data) =>
+            fetchMoviesPaged(pageSize, pageNum).then((data) =>
               setMovies(data.movies),
             );
           }}
@@ -106,7 +109,7 @@ const AdminMoviesPage = () => {
         <tbody>
           {movies.map((m) => (
             <tr key={m.show_id}>
-              <td>{m.type}</td>
+              <td>{m.show_id}</td>
               <td>{m.type}</td>
               <td>{m.director}</td>
               <td>{m.cast}</td>
