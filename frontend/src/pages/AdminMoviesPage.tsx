@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Movie } from '../types/Movie';
-import { deleteMovie, fetchMovies } from '../api/MoviesAPI';
-import Pagination from '../components/Pagination';
-import NewMovieForm from '../components/NewMovieForm';
+import { fetchMovies } from '../api/MoviesAPI';
+import Pagination from '../components/pagination';
+// import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
 
 const AdminMoviesPage = () => {
@@ -18,8 +18,8 @@ const AdminMoviesPage = () => {
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await fetchMovies(pageSize, pageNum, []);
-        setMovies(data.books);
+        const data = await fetchMovies(pageSize, pageNum);
+        setMovies(data.movies);
         setTotalPages(Math.ceil(data.totalNumMovies / pageSize));
       } catch (err) {
         setError((err as Error).message);
@@ -38,7 +38,7 @@ const AdminMoviesPage = () => {
     if (!confirmDelete) return;
 
     try {
-      await deleteMovie(show_id);
+      // await deleteMovie(show_id);
       setMovies(movies.filter((m) => m.show_id !== show_id));
     } catch (error) {
       alert('Failed to delete movie. Please try again.');
@@ -61,19 +61,19 @@ const AdminMoviesPage = () => {
         </button>
       )}
 
-      {showForm && (
-        <NewMovieForm
-          onSuccess={() => {
-            setShowForm(false);
-            fetchMovies(pageSize, pageNum, []).then((data) =>
-              setMovies(data.movies),
-            );
-          }}
-          onCancel={() => setShowForm(false)}
-        />
-      )}
+      {/* {showForm && (
+        // <NewMovieForm
+        //   onSuccess={() => {
+        //     setShowForm(false);
+        //     fetchMovies(pageSize, pageNum, []).then((data) =>
+        //       setMovies(data.movies),
+        //     );
+        //   }}
+        //   onCancel={() => setShowForm(false)}
+        // />
+      )} */}
 
-      {editingMovie && (
+      {/* {editingMovie && (
         <EditMovieForm
           project={editingMovie}
           onSuccess={() => {
@@ -84,7 +84,7 @@ const AdminMoviesPage = () => {
           }}
           onCancel={() => setEditingMovie(null)}
         />
-      )}
+      )} */}
 
       <table className='table table-bordered table-striped'>
         <thead className='table-dark'>

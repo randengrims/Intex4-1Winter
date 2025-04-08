@@ -5,26 +5,34 @@ interface FetchMoviesResponse{
     totalNumMovies: number;
 }
 
-const API_URL = 'https://localhost:5000/api/Movie'
+const API_URL = 'https://localhost:5000/api/Movie';
+
 export const fetchMovies = async (
     pageSize: number,
-    pageNum: number,
-    // selectedCategories: string[]
-) : Promise<FetchMoviesResponse> => {
-    try{
-        // const categoryParams = selectedCategories.map((cat)=> `projectTypes=${encodeURIComponent(cat)}`).join("&")
-
-        const response = await fetch(`${API_URL}/GetMovies?pageSize=${pageSize}&pageNum=${pageNum} : ''}`);
+    pageNum: number
+): Promise<FetchMoviesResponse> => {
+    try {
+        const response = await fetch(`${API_URL}/GetMovies?pageSize=${pageSize}&pageNum=${pageNum}`);
+        
         if (!response.ok) {
-            throw new Error('Failed to fetch projects');
+            throw new Error('Failed to fetch movies');
         }
-        return await response.json();
+
+        const data = await response.json();
+
+        console.log("Parsed Data:", data);
+
+        return {
+            movies: data, // data *is* the array
+            totalNumMovies: data.length // or set this based on a separate endpoint if paginated
+        };
 
     } catch (error) {
-        console.error('Error fetching projects:', error);
+        console.error('Error fetching movies:', error);
         throw error;
     }
 };
+
 
 // This is CRUD stuff we will need 
 
