@@ -31,7 +31,7 @@ const AdminMoviesPage = () => {
     loadMovies();
   }, [pageSize, pageNum]);
 
-  const handleDelete = async (show_id: number) => {
+  const handleDelete = async (show_id: string) => {
     const confirmDelete = window.confirm(
       'Are you sure you want to delete this movie?',
     );
@@ -106,8 +106,6 @@ const AdminMoviesPage = () => {
           </tr>
         </thead>
         <tbody>
-          {/* Fill this below part in with the variables and the table they come
-          from*/}
           {movies.map((m) => (
             <tr key={m.show_id}>
               <td>{m.type}</td>
