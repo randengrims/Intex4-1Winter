@@ -43,58 +43,58 @@ export const fetchMovies = async (
 
 // This is CRUD stuff we will need 
 
-// export const addProject =async (newProject:Project): Promise<Project> => {
-//     try{
-//         const response = await fetch(`${API_URL}/AddProject`, {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type' : 'application/json',
-//             },
-//             body: JSON.stringify(newProject)
-//         });
+export const addMovie =async (newMovie:Movie): Promise<Movie> => {
+    try{
+        const response = await fetch(`${API_URL}/AddMovie`, {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json',
+            },
+            body: JSON.stringify(newMovie)
+        });
 
-//         if (!response.ok){
-//             throw new Error('Failed to add project');
-//         }
+        if (!response.ok){
+            throw new Error('Failed to add movie');
+        }
 
-//         return await response.json();
+        return await response.json();
 
-//     } catch (error) {
-//         console.error('Error adding project', error);
-//         throw error;
-//     }
-// };
+    } catch (error) {
+        console.error('Error adding movie', error);
+        throw error;
+    }
+};
 
-// export const updateProject = async (projectId: number, updatedProject:Project) : Promise<Project> => {
-//     try {
-//         const response = await fetch(`${API_URL}/UpdateProject/${projectId}`, {
-//             method: 'PUT',
-//             headers: {
-//                 'Content-Type' : 'application/json',
-//             },
-//             body: JSON.stringify(updatedProject)
-//         });
+export const updateMovie = async (show_id: string, updatedMovie:Movie) : Promise<Movie> => {
+    try {
+        const response = await fetch(`${API_URL}/UpdateProject/${show_id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type' : 'application/json',
+            },
+            body: JSON.stringify(updatedMovie)
+        });
 
-//         return await response.json();
+        return await response.json();
         
-//     } catch (error) {
-//         console.error('Error updating project:',error);
-//         throw error;
-//     }
-// };
+    } catch (error) {
+        console.error('Error updating movie:', error);
+        throw error;
+    }
+};
 
-// export const deleteProject = async (projectId: number): Promise<void> => {
-//     try {
-//         const response = await fetch(`${API_URL}/DeleteProject/${projectId}`,
-//         {
-//             method: 'DELETE'
-//         });
+export const deleteMovie = async (show_id: string): Promise<void> => {
+    try {
+        const response = await fetch(`${API_URL}/DeleteProject/${show_id}`,
+        {
+            method: 'DELETE'
+        });
 
-//         if (!response.ok){
-//             throw new Error('Failed to delete project');
-//         }
-//     } catch (error){
-//         console.error('Error deleting project:', error);
-//         throw error;
-//     }
-// };
+        if (!response.ok){
+            throw new Error('Failed to delete movie');
+        }
+    } catch (error){
+        console.error('Error deleting movie:', error);
+        throw error;
+    }
+};

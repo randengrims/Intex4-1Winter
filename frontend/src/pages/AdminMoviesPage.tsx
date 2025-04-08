@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Movie } from '../types/Movie';
-import { fetchMovies } from '../api/MoviesAPI';
+import {
+  fetchMoviesPaged,
+  deleteMovie,
+} from '../api/AdminMoviesAPI';
 import Pagination from '../components/pagination';
-// import NewMovieForm from '../components/NewMovieForm';
+import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
 
 const AdminMoviesPage = () => {
@@ -18,7 +21,7 @@ const AdminMoviesPage = () => {
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await fetchMovies(pageSize, pageNum);
+        const data = await fetchMoviesPaged(pageSize, pageNum);
         setMovies(data.movies);
         setTotalPages(Math.ceil(data.totalNumMovies / pageSize));
       } catch (err) {
@@ -38,7 +41,7 @@ const AdminMoviesPage = () => {
     if (!confirmDelete) return;
 
     try {
-      // await deleteMovie(show_id);
+      await deleteMovie(show_id);
       setMovies(movies.filter((m) => m.show_id !== show_id));
     } catch (error) {
       alert('Failed to delete movie. Please try again.');
@@ -61,30 +64,30 @@ const AdminMoviesPage = () => {
         </button>
       )}
 
-      {/* {showForm && (
-        // <NewMovieForm
-        //   onSuccess={() => {
-        //     setShowForm(false);
-        //     fetchMovies(pageSize, pageNum, []).then((data) =>
-        //       setMovies(data.movies),
-        //     );
-        //   }}
-        //   onCancel={() => setShowForm(false)}
-        // />
-      )} */}
+      {showForm && (
+        <NewMovieForm
+          onSuccess={() => {
+            setShowForm(false);
+            fetchMoviesPaged(pageSize, pageNum).then((data) =>
+              setMovies(data.movies),
+            );
+          }}
+          onCancel={() => setShowForm(false)}
+        />
+      )}
 
-      {/* {editingMovie && (
+      {editingMovie && (
         <EditMovieForm
-          project={editingMovie}
+          movie={editingMovie}
           onSuccess={() => {
             setEditingMovie(null);
-            fetchMovies(pageSize, pageNum, []).then((data) =>
+            fetchMoviesPaged(pageSize, pageNum).then((data) =>
               setMovies(data.movies),
             );
           }}
           onCancel={() => setEditingMovie(null)}
         />
-      )} */}
+      )}
 
       <table className='table table-bordered table-striped'>
         <thead className='table-dark'>
@@ -100,16 +103,14 @@ const AdminMoviesPage = () => {
             <th>Duration</th>
             <th>Description</th>
             <th>Genres</th>
-            {/* This is a dropdown with ALL of the boolean
-            options. CAN select more than 1 */}
             <th></th>
           </tr>
         </thead>
         <tbody>
           {movies.map((m) => (
             <tr key={m.show_id}>
+              <td>{m.show_id}</td>
               <td>{m.type}</td>
-              <td>{m.title}</td>
               <td>{m.director}</td>
               <td>{m.cast}</td>
               <td>{m.country}</td>
