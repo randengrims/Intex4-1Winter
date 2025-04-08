@@ -19,12 +19,18 @@ export const fetchMovies = async (
         }
 
         const data = await response.json();
-
         console.log("Parsed Data:", data);
 
+        // Just take the first 100 movies
+        const first100 = data.slice(0, 100);
+
+        // You can still paginate within those 100
+        const startIndex = (pageNum - 1) * pageSize;
+        const paginatedMovies = first100.slice(startIndex, startIndex + pageSize);
+
         return {
-            movies: data, // data *is* the array
-            totalNumMovies: data.length // or set this based on a separate endpoint if paginated
+            movies: paginatedMovies,
+            totalNumMovies: first100.length
         };
 
     } catch (error) {
@@ -32,6 +38,7 @@ export const fetchMovies = async (
         throw error;
     }
 };
+
 
 
 // This is CRUD stuff we will need 
