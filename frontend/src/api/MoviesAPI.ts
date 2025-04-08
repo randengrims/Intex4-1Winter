@@ -9,12 +9,21 @@ const API_URL = 'https://localhost:5000/api/Movie';
 
 export const fetchMovies = async (
     pageSize: number,
-    pageNum: number
+    pageNum: number,
+    selectedGenres: string[]= [] // Default to an empty array if not provided
 ): Promise<FetchMoviesResponse> => {
     try {
-        const response = await fetch(`${API_URL}/GetMovies?pageSize=${pageSize}&pageNum=${pageNum}`);
+        // Ensure selectedGenres is always an array before processing
+        const genreParam = selectedGenres.join(','); 
+        
+        // Build the URL
+        const url = `${API_URL}/GetMovies?pageSize=${pageSize}&pageNum=${pageNum}${selectedGenres.length ? `&projectTypes=${encodeURIComponent(genreParam)}` : ''}`;
+        
+        const response = await fetch(url);
         
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Response Error: ", errorText);
             throw new Error('Failed to fetch movies');
         }
 
@@ -31,7 +40,6 @@ export const fetchMovies = async (
         throw error;
     }
 };
-
 
 
 // This is CRUD stuff we will need 
