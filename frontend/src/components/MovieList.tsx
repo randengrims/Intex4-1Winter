@@ -14,27 +14,37 @@ function MovieList() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true)
 
-    useEffect(()=>{
-        const loadMovies = async ()=>{
-            try{
-                setLoading(true);
-                const data = await fetchMovies(pageSize, pageNum)
-            
+  useEffect(() => {
+    const loadMovies = async () => {
+        try {
+            setLoading(true);
+            const data = await fetchMovies(pageSize, pageNum);
 
+            // Log the full data response to inspect it
+            console.log(data);
 
-            setMovies(data.movies);
-            setTotalPages(Math.ceil(data.totalNumMovies/pageSize));
-            } catch (error) {
-                setError((error as Error).message)
-            } finally {
-                setLoading(false);
+            // Check if data.movies is an array
+            if (Array.isArray(data.movies)) {
+                setMovies(data.movies);
+                setTotalPages(Math.ceil(data.totalNumMovies / pageSize));
+            } else {
+                throw new Error("Invalid movies data");
             }
-        };
+        } catch (error) {
+            setError((error as Error).message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        loadMovies();
-    }, [pageSize, pageNum]);
+    loadMovies();
+}, [pageSize, pageNum]);
 
-    if (loading) return <p>Loading projects ...</p>
+    
+    
+    
+
+    if (loading) return <p>Loading Movies ...</p>
     if (error) return <p className="text-red-500">Error: {error}</p>
 
     return(
@@ -42,11 +52,11 @@ function MovieList() {
         {movies.map((m) => (
             <div id="movieCard" className="card" key={m.show_id}>
                 {/* Movie Poster */}
-                <img
-                    src={`../MoviePosters/${m.title}.jpg`} // Adjust path if needed
+                {/* <img
+                    // src={`../MoviePosters/${m.title}.jpg`} // Adjust path if needed
                     alt={`Poster of ${m.title}`}
                     className="card-img-top"
-                />
+                /> */}
                 <h3 className="card-title">{m.title}</h3>
                 <div className="card-body">
                     <ul className='list-unstyled'>
