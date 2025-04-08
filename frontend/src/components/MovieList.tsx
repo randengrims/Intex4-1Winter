@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import {Project} from '../types/Project'
+import {Movie} from '../types/Movie'
 import { useNavigate } from "react-router-dom";
-import { fetchProjects } from "../api/ProjectsAPI";
-import Pagination from "./Pagination";
+import { fetchMovies } from "../api/MoviesAPI"
+import Pagination from "./pagination";
 
-function ProjectList({selectedCategories}: {selectedCategories: string[]}) {
+function MovieList() {
 
-    const[projects, setProjects] = useState<Project[]>([]);
+    const[movies, setMovies] = useState<Movie[]>([]);
     const [pageSize, setPageSize] = useState<number>(10);
     const [pageNum, setPageNum] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(0);
@@ -15,15 +15,15 @@ function ProjectList({selectedCategories}: {selectedCategories: string[]}) {
     const [loading, setLoading] = useState(true)
 
     useEffect(()=>{
-        const loadProjects = async ()=>{
+        const loadMovies = async ()=>{
             try{
                 setLoading(true);
-                const data = await fetchProjects(pageSize, pageNum, selectedCategories)
+                const data = await fetchMovies(pageSize, pageNum)
             
 
 
-            setProjects(data.projects);
-            setTotalPages(Math.ceil(data.totalNumProjects/pageSize));
+            setMovies(data.movies);
+            setTotalPages(Math.ceil(data.totalNumMovies/pageSize));
             } catch (error) {
                 setError((error as Error).message)
             } finally {
@@ -31,32 +31,42 @@ function ProjectList({selectedCategories}: {selectedCategories: string[]}) {
             }
         };
 
-        loadProjects();
-    }, [pageSize, pageNum, selectedCategories]);
+        loadMovies();
+    }, [pageSize, pageNum]);
 
     if (loading) return <p>Loading projects ...</p>
     if (error) return <p className="text-red-500">Error: {error}</p>
 
     return(
         <>
-        {projects.map((p) =>
-        <div id="projectCard" className="card" key={p.projectId}>
-            <h3 className="card-title">{p.projectName}</h3>
-            <div className="card-body">
-            <ul className='list-unstyled'>
-                <li><strong>Project Type:</strong> {p.projectType}</li>
-                <li><strong>Regional Program:</strong> {p.projectRegionalProgram}</li>
-                <li><strong>Impact:</strong> {p.projectImpact} Individuals Served</li>
-                <li><strong>Project Phase:</strong> {p.projectPhase}</li>
-                <li><strong>Project Status:</strong> {p.projectFunctionalityStatus}</li>
-            </ul>
-
-            <button className="btn btn-success" onClick={() => navigate(`/donate/${p.projectName}/${p.projectId}`)}>Donate</button>
-            </div>
-            
-        </div>
+        {movies.map((m) => (
+            <div id="movieCard" className="card" key={m.show_id}>
+                {/* Movie Poster */}
+                <img
+                    src={`../MoviePosters/${m.title}.jpg`} // Adjust path if needed
+                    alt={`Poster of ${m.title}`}
+                    className="card-img-top"
+                />
+                <h3 className="card-title">{m.title}</h3>
+                <div className="card-body">
+                    <ul className='list-unstyled'>
+                        <li><strong>Type:</strong> {m.type}</li>
+                        <li><strong>Director:</strong> {m.director}</li>
+                        <li><strong>Cast:</strong> {m.cast}</li>
+                        <li><strong>Country:</strong> {m.country}</li>
+                        <li><strong>Release Year:</strong> {m.release_year}</li>
+                        <li><strong>Rating:</strong> {m.rating}</li>
+                        <li><strong>Duration:</strong> {m.duration}</li>
+                        <li><strong>Description:</strong> {m.description}</li>
+                        <li><strong>Genres:</strong> {m.genres}</li>
+                    </ul>
         
-        )}
+                    <button className="btn btn-success" onClick={() => navigate(`/donate/${m.title}/${m.show_id}`)}>Donate</button>
+                </div>
+            </div>
+        ))}
+        
+    
             <Pagination
             currentPage={pageNum}
             totalPages={totalPages}
@@ -73,4 +83,4 @@ function ProjectList({selectedCategories}: {selectedCategories: string[]}) {
     );
 }
 
-export default ProjectList;
+export default MovieList;
