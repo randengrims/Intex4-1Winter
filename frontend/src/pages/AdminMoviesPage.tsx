@@ -75,7 +75,7 @@ const AdminMoviesPage = () => {
 
       {editingMovie && (
         <EditMovieForm
-          project={editingMovie}
+          movie={editingMovie}
           onSuccess={() => {
             setEditingMovie(null);
             fetchMovies(pageSize, pageNum, []).then((data) =>
@@ -109,7 +109,7 @@ const AdminMoviesPage = () => {
           {movies.map((m) => (
             <tr key={m.show_id}>
               <td>{m.type}</td>
-              <td>{m.title}</td>
+              <td>{m.type}</td>
               <td>{m.director}</td>
               <td>{m.cast}</td>
               <td>{m.country}</td>

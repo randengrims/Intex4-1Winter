@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import { Book } from '../types/Book';
-import { updateBook } from '../api/BooksAPI';
+import { Movie } from '../types/Movie';
+import { updateMovie } from '../api/MoviesAPI';
 
-interface EditBookFormProps {
-  project: Book;
+interface EditMovieFormProps {
+  movie: Movie;
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-const EditBookForm = ({ project, onSuccess, onCancel }: EditBookFormProps) => {
-  const [formData, setFormData] = useState<Book>({ ...project });
+const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
+  const [formData, setFormData] = useState<Movie>({ ...movie });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,87 +17,104 @@ const EditBookForm = ({ project, onSuccess, onCancel }: EditBookFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateBook(formData.bookID, formData);
+    await updateMovie(formData.show_id, formData);
     onSuccess();
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Edit Book</h2>
+      <h2>Edit Movie</h2>
+      <label>
+        Type:
+        <input
+          type='string'
+          name='type'
+          value={formData.type}
+          onChange={handleChange}
+        />
+      </label>
       <label>
         Title:
         <input
-          type='text'
+          type='string'
           name='title'
-          value={formData.title}
+          value={formData.type}
           onChange={handleChange}
         />
       </label>
       <label>
-        Author:
-        <input
-          type='text'
-          name='author'
-          value={formData.author}
-          onChange={handleChange}
-        />
-      </label>
-      <label>
-        Publisher:
-        <input
-          type='text'
-          name='publisher'
-          value={formData.publisher}
-          onChange={handleChange}
-        />
-      </label>
-      <label>
-        ISBN:
+        Director:
         <input
           type='string'
-          name='isbn'
-          value={formData.isbn}
+          name='director'
+          value={formData.director}
           onChange={handleChange}
         />
       </label>
       <label>
-        Classification:
+        Cast:
         <input
-          type='text'
-          name='classification'
-          value={formData.classification || ''}
+          type='string'
+          name='cast'
+          value={formData.cast}
           onChange={handleChange}
         />
       </label>
       <label>
-        Category:
+        Country:
         <input
-          type='text'
-          name='category'
-          value={formData.category}
+          type='string'
+          name='country'
+          value={formData.country}
           onChange={handleChange}
         />
       </label>
       <label>
-        Page Count:
-        <input
-          type='number'
-          name='pageCount'
-          value={formData.pageCount ?? ''}
-          onChange={handleChange}
-        />
-      </label>
-      <label>
-        Price:
+        Release Year:
         <input
           type='number'
-          name='price'
-          step='0.01'
-          value={formData.price ?? ''}
+          name='release_year'
+          value={formData.release_year}
           onChange={handleChange}
         />
       </label>
-      <button type='submit'>Update Book</button>
+      <label>
+        Rating:
+        <input
+          type='string'
+          name='rating'
+          value={formData.rating}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        Duration:
+        <input
+          type='string'
+          name='duration'
+          value={formData.duration}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        Description:
+        <input
+          type='string'
+          name='description'
+          value={formData.description}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        Genre:
+        <input
+          type='string'
+          name='genres'
+          value={formData.genres}
+          onChange={handleChange}
+        />
+      </label>
+      <button type='submit'>Update Movie</button>
       <button type='button' onClick={onCancel}>
         Cancel
       </button>
@@ -105,4 +122,4 @@ const EditBookForm = ({ project, onSuccess, onCancel }: EditBookFormProps) => {
   );
 };
 
-export default EditBookForm;
+export default EditMovieForm;
