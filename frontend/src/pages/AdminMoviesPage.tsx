@@ -20,8 +20,6 @@ const AdminMoviesPage = () => {
       try {
         const data = await fetchMovies(pageSize, pageNum);
         setMovies(data.movies);
-        const data = await fetchMovies(pageSize, pageNum);
-        setMovies(data.movies);
         setTotalPages(Math.ceil(data.totalNumMovies / pageSize));
       } catch (err) {
         setError((err as Error).message);
@@ -40,7 +38,7 @@ const AdminMoviesPage = () => {
     if (!confirmDelete) return;
 
     try {
-      // await deleteMovie(show_id);
+      await deleteMovie(show_id);
       setMovies(movies.filter((m) => m.show_id !== show_id));
     } catch (error) {
       alert('Failed to delete movie. Please try again.');
@@ -75,7 +73,7 @@ const AdminMoviesPage = () => {
         />
       )}
 
-      {/* {editingMovie && (
+      {editingMovie && (
         <EditMovieForm
           movie={editingMovie}
           onSuccess={() => {
@@ -86,7 +84,7 @@ const AdminMoviesPage = () => {
           }}
           onCancel={() => setEditingMovie(null)}
         />
-      )} */}
+      )}
 
       <table className='table table-bordered table-striped'>
         <thead className='table-dark'>
