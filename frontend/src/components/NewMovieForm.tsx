@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Movie } from '../types/Movie';
-import { addBook } from '../api/MoviesAPI';
+import { addMovie } from '../api/MoviesAPI';
 
 interface NewMovieFormProps {
   onSuccess: () => void;
@@ -28,7 +28,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await addBook(formData);
+    await addMovie(formData);
     onSuccess();
   };
 

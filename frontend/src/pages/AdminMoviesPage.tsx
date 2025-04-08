@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Movie } from '../types/Movie';
-import { /*deleteMovie,*/ fetchMovies } from '../api/MoviesAPI';
+import { deleteMovie, fetchMovies } from '../api/MoviesAPI';
 import Pagination from '../components/pagination';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
@@ -31,19 +31,19 @@ const AdminMoviesPage = () => {
     loadMovies();
   }, [pageSize, pageNum]);
 
-  // const handleDelete = async (show_id: string) => {
-  //   const confirmDelete = window.confirm(
-  //     'Are you sure you want to delete this movie?',
-  //   );
-  //   if (!confirmDelete) return;
+  const handleDelete = async (show_id: string) => {
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this movie?',
+    );
+    if (!confirmDelete) return;
 
-  //   try {
-  //     await deleteMovie(show_id);
-  //     setMovies(movies.filter((m) => m.show_id !== show_id));
-  //   } catch (error) {
-  //     alert('Failed to delete movie. Please try again.');
-  //   }
-  // };
+    try {
+      await deleteMovie(show_id);
+      setMovies(movies.filter((m) => m.show_id !== show_id));
+    } catch (error) {
+      alert('Failed to delete movie. Please try again.');
+    }
+  };
 
   if (loading) return <p>Loading movies...</p>;
   if (error) return <p className='text-red-500'>Error: {error}</p>;
@@ -125,7 +125,7 @@ const AdminMoviesPage = () => {
                 </button>
                 <button
                   className='btn btn-danger btn-sm w-100'
-                  /* onClick={() => handleDelete(m.show_id)} */
+                  onClick={() => handleDelete(m.show_id)}
                 >
                   Delete
                 </button>
