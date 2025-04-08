@@ -1,0 +1,92 @@
+/* Private Header Styling */
+.private-header {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 1rem 2rem;
+  }
+  
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space between logo, nav, and user menu */
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  
+  /* Brand logo styling */
+  .brand-logo a {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: goldenrod;
+    transition: color 0.3s ease;
+  }
+  
+  .brand-logo a:hover {
+    color: gold; /* Bright gold on hover */
+  }
+  
+  /* Navigation styling */
+  .navigation ul {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+  }
+  
+  .navigation ul li a {
+    text-decoration: none;
+    font-size: 1rem;
+    color: white;
+    transition: color 0.3s ease;
+  }
+  
+  .navigation ul li a:hover {
+    color: gold; /* Gold on hover */
+  }
+  
+  /* User menu styling */
+  .user-menu .profile-link,
+  .user-menu .logout-link {
+    text-decoration: none;
+    font-size: 1rem;
+    margin-left: 1rem;
+    color: white;
+  }
+  
+  .user-menu .logout-link:hover {
+    color: yellow; /* Yellow on hover */
+  }
+  
+  .logout {
+    color: #fff;
+    font-size: large;
+    font-weight: bold;
+  }
+  
+  /* Media Queries for Mobile Devices */
+  @media (max-width: 768px) {
+    .private-header {
+      padding: 1rem;
+    }
+  
+    .header-container {
+      flex-direction: column; /* Stack elements vertically */
+      text-align: center; /* Center text on small screens */
+    }
+  
+    .brand-logo a {
+      font-size: 1.25rem; /* Adjust font size for small screens */
+    }
+  
+    .navigation ul {
+      flex-direction: column; /* Stack nav items vertically */
+      gap: 1rem;
+    }
+  
+    .navigation ul li a {
+      font-size: 1.2rem; /* Increase font size for readability on small screens */
+    }
+  }
