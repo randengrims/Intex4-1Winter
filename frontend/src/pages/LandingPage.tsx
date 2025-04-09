@@ -113,11 +113,12 @@ const LandingPage: React.FC = () => {
           <Slider {...settings}>
             {moviePosters.map((poster, index) => (
               <div key={index} className='px-2'>
-                <img
-                  src={`/MoviePosters/${poster}`}
-                  alt={`Movie Poster ${index + 1}`}
-                  className='img-fluid rounded'
-                />
+            <img
+              src={`https://moviepostersforintex.blob.core.windows.net/movieposters/${encodeURIComponent(poster)}`}
+              alt={`Movie Poster ${index + 1}`}
+              className='img-fluid rounded'
+            />
+
               </div>
             ))}
           </Slider>
