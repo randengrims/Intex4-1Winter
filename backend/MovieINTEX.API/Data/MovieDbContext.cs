@@ -13,6 +13,7 @@ namespace MovieINTEX.Data
         public DbSet<MovieUser> movies_users { get; set; }
         
         public DbSet<Recommendations> recommendations { get; set; }
+        public DbSet<Requirement2Data> requirement2data { get; set; }
 
     }
 }

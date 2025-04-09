@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Movie } from '../types/Movie';
-import { fetchMovies, fetchSimilarMovies } from "../api/MoviesAPI";
-import PublicHeader from "./PublicHeader";
-import MovieFilter from "./MovieFilter";
-import MoviePopup from './MoviePopup';
+import { fetchUserRecommendations, fetchSimilarMovies } from "../api/MoviesAPI";
+import PublicHeader from "../components/PublicHeader";
+import MovieFilter from "../components/MovieFilter";
+import MoviePopup from '../components/MoviePopup';
 import ReactStars from "react-rating-stars-component";
-import StarRating from "./StarRating";
+import StarRating from "../components/StarRating";
 
 const sanitizeTitle = (title: string): string => {
     return title
@@ -25,240 +25,236 @@ const imageExists = async (url: string): Promise<boolean> => {
     });
 };
 
-function MovieList() {
-    const [movies, setMovies] = useState<Movie[]>([]);
-    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+function UserRecommendations() {
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-    // const [userRating, setUserRating] = useState<number | null>(null);
     const [similarMovies, setSimilarMovies] = useState<Movie[]>([]);
-    const [searchTerm, setSearchTerm] = useState<string>("");
-    const [pageSize] = useState<number>(10);
-    const [pageNum, setPageNum] = useState<number>(1);
-    const [hasMore, setHasMore] = useState(true);
+    const [hasMore] = useState(true);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [featuredMovie, setFeaturedMovie] = useState<Movie | null>(null);
     const [averageRating, setAverageRating] = useState<number | null>(null);
+    const [groupedMovies, setGroupedMovies] = useState<Record<string, Movie[]>>({});
+
+
 
     const getGenreList = (movie: Movie): string => {
         const alwaysUpper = new Set(["TV", "ID", "USA", "UK"]);
-      
         const splitCamelCase = (text: string): string[] => {
-          const result: string[] = [];
-          let word = '';
-      
-          for (let i = 0; i < text.length; i++) {
-            const char = text[i];
-            const isUpper = char === char.toUpperCase() && char !== char.toLowerCase();
-      
-            if (isUpper && word.length > 0 && text[i - 1] !== text[i - 1].toUpperCase()) {
-              result.push(word);
-              word = char;
-            } else {
-              word += char;
+            const result: string[] = [];
+            let word = '';
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const isUpper = char === char.toUpperCase() && char !== char.toLowerCase();
+                if (isUpper && word.length > 0 && text[i - 1] !== text[i - 1].toUpperCase()) {
+                    result.push(word);
+                    word = char;
+                } else {
+                    word += char;
+                }
             }
-          }
-      
-          if (word) result.push(word);
-          return result;
+            if (word) result.push(word);
+            return result;
         };
-      
         return Object.entries(movie)
-          .filter(([key, value]) => typeof value === "boolean" && value === true)
-          .map(([key]) => {
-            const parts = splitCamelCase(key);
-            return parts
-              .map(word => alwaysUpper.has(word.toUpperCase()) 
-                ? word.toUpperCase() 
-                : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-              .join(' ');
-          })
-          .join(', ');
-      };
-      
+            .filter(([key, value]) => typeof value === "boolean" && value === true)
+            .map(([key]) => {
+                const parts = splitCamelCase(key);
+                return parts.map(word => alwaysUpper.has(word.toUpperCase())
+                    ? word.toUpperCase()
+                    : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+            }).join(', ');
+    };
 
-      
-      
-
-    const observer = useRef<IntersectionObserver | null>(null);
     const seenTitles = useRef<Set<string>>(new Set());
     const seenImages = useRef<Set<string>>(new Set());
 
-    const lastMovieRef = useCallback((node: HTMLDivElement | null) => {
-        if (loading) return;
-        if (observer.current) observer.current.disconnect();
-        observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore) {
-                setPageNum(prev => prev + 1);
-            }
-        });
-        if (node) observer.current.observe(node);
-    }, [loading, hasMore]);
 
     useEffect(() => {
-        if (pageNum === 1) {
-            seenTitles.current.clear();
-            seenImages.current.clear();
-        }
-
         const loadMovies = async () => {
             try {
                 setLoading(true);
-                const data = await fetchMovies(pageSize, pageNum, selectedGenres, searchTerm);
-                if (Array.isArray(data.movies)) {
-                    const newMovies: Movie[] = [];
-                    for (const movie of data.movies) {
-                        if (movie.type?.toLowerCase().trim() !== "movie") continue;
+                const recommendationGroups = await fetchUserRecommendations(); // { Action: [...], Dramas: [...], etc. }
+    
+                const grouped: Record<string, Movie[]> = {};
+                const allMovies: Movie[] = [];
+    
+                for (const [genre, movies] of Object.entries(recommendationGroups)) {
+                    const filtered: Movie[] = [];
+    
+                    for (const movie of movies) {
                         const title = sanitizeTitle(movie.title);
                         const imageUrl = `https://moviepostersforintex.blob.core.windows.net/movieposters/${encodeURIComponent(title)}.jpg`;
-                    
                         if (seenTitles.current.has(movie.title) || seenImages.current.has(imageUrl)) continue;
-                    
                         const exists = await imageExists(imageUrl);
                         if (!exists) continue;
-                    
                         seenTitles.current.add(movie.title);
                         seenImages.current.add(imageUrl);
-                        newMovies.push(movie);
+                        filtered.push(movie);
+                        allMovies.push(movie);
                     }
-                    setMovies(prev => pageNum === 1 ? newMovies : [...prev, ...newMovies]);
-                    const totalPages = Math.ceil(data.totalNumMovies / pageSize);
-                    setHasMore(pageNum < totalPages);
-
-                    let selectedFeaturedMovie = localStorage.getItem('featuredMovie');
-                    if (!selectedFeaturedMovie && newMovies.length) {
-                        const randomIndex = Math.floor(Math.random() * newMovies.length);
-                        selectedFeaturedMovie = JSON.stringify(newMovies[randomIndex]);
-                        localStorage.setItem('featuredMovie', selectedFeaturedMovie);
-                    }
-                    // if (selectedFeaturedMovie) {
-                    //     setFeaturedMovie(JSON.parse(selectedFeaturedMovie));
-                    // }
-                } else {
-                    throw new Error("Invalid movies data");
+    
+                    grouped[genre] = filtered;
                 }
+    
+                setGroupedMovies(grouped);
+    
+                if (allMovies.length) {
+                    const randomIndex = Math.floor(Math.random() * allMovies.length);
+                    setFeaturedMovie(allMovies[randomIndex]);
+                }
+    
             } catch (error) {
                 setError((error as Error).message);
             } finally {
                 setLoading(false);
             }
         };
-
+    
         loadMovies();
-    }, [pageNum, pageSize, selectedGenres, searchTerm]);
+    }, []);
+    
 
     useEffect(() => {
-        // const fetchUserRating = async () => {
-        //     if (!selectedMovie) return;
-        //     try {
-        //         const res = await fetch(`https://localhost:5000/api/Movie/ratings/user/testuser/${selectedMovie.show_id}`);
-        //         const data = await res.json();
-        //         if (data.rating !== undefined && data.rating !== null) {
-        //             setUserRating(data.rating);
-        //         } else {
-        //             setUserRating(null);
-        //         }
-        //     } catch (err) {
-        //         console.error("Error fetching user rating:", err);
-        //     }
-        // };
-    
         const fetchAverageRating = async () => {
             if (!selectedMovie) return;
             try {
                 const res = await fetch(`https://localhost:5000/api/Movie/ratings/average/${selectedMovie.show_id}`);
                 const data = await res.json();
-                if (data.average !== null && data.average !== undefined) {
-                    setAverageRating(data.average);
-                } else {
-                    setAverageRating(null);
-                }
-            } catch (err) {
-                console.error("Error fetching average rating:", err);
+                setAverageRating(data?.average ?? null);
+            } catch {
                 setAverageRating(null);
             }
         };
-    
+
         const fetchSimilar = async () => {
             if (!selectedMovie) return;
             try {
                 const sims = await fetchSimilarMovies(selectedMovie.show_id);
                 setSimilarMovies(sims);
-            } catch (err) {
-                console.error("Failed to fetch similar movies", err);
+            } catch {
                 setSimilarMovies([]);
             }
         };
-    
-        // fetchUserRating();
+
         fetchAverageRating();
         fetchSimilar();
     }, [selectedMovie]);
-    
 
     if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;
 
     return (
         <>
             <PublicHeader />
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '20px' }}>
-                <input
-                    type="text"
-                    placeholder="Search by title..."
-                    value={searchTerm}
-                    onChange={(e) => {
-                        setSearchTerm(e.target.value);
-                        setPageNum(1);
-                        setMovies([]);
-                    }}
-                    style={{ padding: '10px', fontSize: '16px', width: '300px' }}
-                />
-                <MovieFilter
-                    selectedGenres={selectedGenres}
-                    setSelectedGenres={(genres) => {
-                        setSelectedGenres(genres);
-                        setPageNum(1);
-                        setMovies([]);
-                    }}
-                />
-            </div>
+            <h1 style={{ color: 'black', textAlign: 'center', fontSize: '2rem', margin: '1.5rem 0' }}>
+                Based on your viewing history
+            </h1>
             <div style={{ margin: "2rem" }}>
             </div>
+            {featuredMovie && (
+                <div style={{ backgroundColor: '#333', color: 'white', padding: '20px', display: 'flex', alignItems: 'center', marginBottom: '20px', justifyContent: 'flex-start' }}>
+                    <img
+                        src={`https://moviepostersforintex.blob.core.windows.net/movieposters/${encodeURIComponent(sanitizeTitle(featuredMovie.title))}.jpg`}
+                        alt={featuredMovie.title}
+                        style={{ width: '200px', height: '300px', objectFit: 'cover' }}
+                        onError={(e) => (e.currentTarget as HTMLImageElement).src = "/Click.jpg"}
+                    />
+                    <div style={{ marginLeft: '20px', maxWidth: '60%', textAlign: 'left' }}>
+                        <h2>Featured Movie:</h2>
+                        <h3>{featuredMovie.title} ({featuredMovie.release_year})</h3>
+                        <p><strong>Rating:</strong> {featuredMovie.rating}</p>
+                        <p><strong>Description:</strong> {featuredMovie.description}</p>
+                        <button style={{ marginTop: '10px', padding: '10px 20px', backgroundColor: '#ff8c00', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                            See Details
+                        </button>
+                    </div>
+                </div>
+            )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px', padding: '16px' }}>
+            {Object.entries(groupedMovies).map(([genre, movies]) => (
+            <div key={genre} style={{ marginBottom: '3rem' }}>
+                <h2
+                    style={{
+                        color: '#000000',
+                        marginLeft: '1.5rem',
+                        marginBottom: '1rem',
+                        fontSize: '1.75rem',
+                        fontWeight: '700',
+                        letterSpacing: '0.5px',
+                        textAlign: 'left',
+                    }}
+                    >
+                    {genre}
+                </h2>
+
+                <div
+                style={{
+                    display: 'flex',
+                    overflowX: 'auto',
+                    gap: '16px',
+                    padding: '0 1.5rem',
+                    scrollbarWidth: 'none' // for Firefox
+                }}
+                >
                 {movies.map((m, idx) => {
-                    const isLast = idx === movies.length - 1;
                     const sanitizedTitle = sanitizeTitle(m.title);
                     const imageUrl = `https://moviepostersforintex.blob.core.windows.net/movieposters/${encodeURIComponent(sanitizedTitle)}.jpg`;
                     return (
-                        <div
-                            key={m.show_id}
-                            ref={isLast ? lastMovieRef : null}
-                            style={{ width: '100%', height: '300px', backgroundColor: '#1F1F1F', borderRadius: '8px', overflow: 'hidden', position: 'relative', boxShadow: '0 4px 10px rgba(0,0,0,0.5)', cursor: 'pointer' }}
-                            onClick={() => setSelectedMovie(m)}
-                            onMouseEnter={e => {
-                                (e.currentTarget as HTMLDivElement).style.transform = 'scale(1.05)';
-                                const overlay = (e.currentTarget as HTMLDivElement).querySelector('.overlay') as HTMLDivElement;
-                                if (overlay) overlay.style.opacity = '1';
-                            }}
-                            onMouseLeave={e => {
-                                (e.currentTarget as HTMLDivElement).style.transform = 'scale(1)';
-                                const overlay = (e.currentTarget as HTMLDivElement).querySelector('.overlay') as HTMLDivElement;
-                                if (overlay) overlay.style.opacity = '0';
-                            }}
-                        >
-                            <img
-                                src={imageUrl}
-                                alt={m.title}
-                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                onError={(e) => (e.currentTarget as HTMLImageElement).src = "/Click.jpg"}
-                            />
-                            <div className="overlay" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '60px', background: 'rgba(0, 0, 0, 0.7)', color: 'white', display: 'flex', alignItems: 'center', padding: '0 10px', fontSize: '14px', opacity: 0, transition: 'opacity 0.3s ease' }}>
-                                {m.title}
-                            </div>
+                    <div
+                        key={m.show_id}
+                        style={{
+                        flex: '0 0 auto',
+                        width: '200px',
+                        height: '300px',
+                        backgroundColor: '#1F1F1F',
+                        borderRadius: '8px',
+                        overflow: 'hidden',
+                        position: 'relative',
+                        boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
+                        cursor: 'pointer'
+                        }}
+                        onClick={() => setSelectedMovie(m)}
+                        onMouseEnter={e => {
+                        (e.currentTarget as HTMLDivElement).style.transform = 'scale(1.05)';
+                        const overlay = (e.currentTarget as HTMLDivElement).querySelector('.overlay') as HTMLDivElement;
+                        if (overlay) overlay.style.opacity = '1';
+                        }}
+                        onMouseLeave={e => {
+                        (e.currentTarget as HTMLDivElement).style.transform = 'scale(1)';
+                        const overlay = (e.currentTarget as HTMLDivElement).querySelector('.overlay') as HTMLDivElement;
+                        if (overlay) overlay.style.opacity = '0';
+                        }}
+                    >
+                        <img
+                        src={imageUrl}
+                        alt={m.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        onError={(e) => (e.currentTarget as HTMLImageElement).src = "/Click.jpg"}
+                        />
+                        <div className="overlay" style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: '60px',
+                        background: 'rgba(0, 0, 0, 0.7)',
+                        color: 'white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '0 10px',
+                        fontSize: '14px',
+                        opacity: 0,
+                        transition: 'opacity 0.3s ease'
+                        }}>
+                        {m.title}
                         </div>
+                    </div>
                     );
                 })}
+                </div>
             </div>
+            ))}
+
+
 
             {selectedMovie && (
                 <MoviePopup open={!!selectedMovie} onClose={() => setSelectedMovie(null)}>
@@ -352,4 +348,4 @@ function MovieList() {
     );
 }
 
-export default MovieList;
+export default UserRecommendations;

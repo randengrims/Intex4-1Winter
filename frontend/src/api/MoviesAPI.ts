@@ -152,3 +152,18 @@ export const fetchAverageRating = async (show_id: string): Promise<number | null
       return null;
     }
   };
+
+  export const fetchUserRecommendations = async (): Promise<Record<string, Movie[]>> => {
+    try {
+        const response = await fetch('https://localhost:5000/api/Movie/UserRecommendations');
+        if (!response.ok) {
+            throw new Error("Failed to fetch user recommendations");
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching user recommendations:", error);
+        throw error;
+    }
+};

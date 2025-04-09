@@ -389,8 +389,45 @@ public IActionResult GetMoviesPaged(
             double average = ratings.Average(r => r.rating ?? 0);
             return Ok(new { average });
         }
+        
+        [HttpGet("UserRecommendations")]
+        public IActionResult GetUserRecommendations()
+        {
+            // Step 1: Get all the genre-based recommendations into memory
+            var genreRecs = _movieContext.requirement2data.ToList();
 
+            // Step 2: Flatten all the show_ids you want to fetch from movies_titles
+            var allShowIds = genreRecs
+                .SelectMany(r => new[]
+                {
+                    r.Recommendation_1, r.Recommendation_2, r.Recommendation_3,
+                    r.Recommendation_4, r.Recommendation_5, r.Recommendation_6,
+                    r.Recommendation_7, r.Recommendation_8, r.Recommendation_9, r.Recommendation_10
+                })
+                .Distinct()
+                .ToList();
 
+            // Step 3: Fetch all matching movies in one go
+            var allMovies = _movieContext.movies_titles
+                .Where(m => allShowIds.Contains(m.show_id))
+                .ToList();
+
+            // Step 4: Build the result grouped by genre
+            var result = genreRecs.ToDictionary(
+                rec => rec.Genre,
+                rec => new[]
+                    {
+                        rec.Recommendation_1, rec.Recommendation_2, rec.Recommendation_3,
+                        rec.Recommendation_4, rec.Recommendation_5, rec.Recommendation_6,
+                        rec.Recommendation_7, rec.Recommendation_8, rec.Recommendation_9, rec.Recommendation_10
+                    }
+                    .Select(id => allMovies.FirstOrDefault(m => m.show_id == id))
+                    .Where(m => m != null) // Just in case some show_ids don't match
+                    .ToList()
+            );
+
+            return Ok(result);
+        }
 
 
     }

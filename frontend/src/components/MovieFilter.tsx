@@ -32,7 +32,7 @@ function GenreFilter({
 
   return (
     <div className="category-filter">
-      <h5>Project Types</h5>
+      <h5>Genre</h5>
       <div className="category-dropdown">
         <select
           value={selectedGenres[0] || ""}

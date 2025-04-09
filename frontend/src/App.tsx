@@ -7,6 +7,8 @@ import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import Footer from './components/Footer'; // Import Footer component
 import SignUpPage from './pages/SignUpPage';
+import UserRecommendations from './pages/RecommenderPage';
+import TvList from './pages/TvShowPage';
 
 function App() {
   return (
@@ -25,7 +27,9 @@ function App() {
             }
           />
           <Route path='/sign-up' element={<SignUpPage />} />
-          <Route path='/HomePage' element={<HomePage />} />
+          <Route path='/HomePage' element={<UserRecommendations/>} />
+          <Route path="/MoviePage" element={<HomePage/>}/>
+          <Route path="/TVPage" element={<TvList/>}/>
         </Routes>
       </div>
       {/* Footer */}

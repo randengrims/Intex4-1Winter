@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Movie } from '../types/Movie';
 import { fetchMovies, fetchSimilarMovies } from "../api/MoviesAPI";
-import PublicHeader from "./PublicHeader";
-import MovieFilter from "./MovieFilter";
-import MoviePopup from './MoviePopup';
+import PublicHeader from "../components/PublicHeader";
+import MovieFilter from "../components/MovieFilter";
+import MoviePopup from '../components/MoviePopup';
 import ReactStars from "react-rating-stars-component";
-import StarRating from "./StarRating";
+import StarRating from "../components/StarRating";
 
 const sanitizeTitle = (title: string): string => {
     return title
@@ -25,7 +25,7 @@ const imageExists = async (url: string): Promise<boolean> => {
     });
 };
 
-function MovieList() {
+function TvList() {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
@@ -107,7 +107,7 @@ function MovieList() {
                 if (Array.isArray(data.movies)) {
                     const newMovies: Movie[] = [];
                     for (const movie of data.movies) {
-                        if (movie.type?.toLowerCase().trim() !== "movie") continue;
+                        if (movie.type?.toLowerCase().trim() !== "tv show") continue;
                         const title = sanitizeTitle(movie.title);
                         const imageUrl = `https://moviepostersforintex.blob.core.windows.net/movieposters/${encodeURIComponent(title)}.jpg`;
                     
@@ -352,4 +352,4 @@ function MovieList() {
     );
 }
 
-export default MovieList;
+export default TvList;
