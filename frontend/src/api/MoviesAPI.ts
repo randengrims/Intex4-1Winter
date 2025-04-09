@@ -37,6 +37,7 @@ export const fetchMovies = async (
         }
 
         const data = await response.json();
+
         console.log("Parsed Data:", data);
 
         return {
@@ -49,10 +50,6 @@ export const fetchMovies = async (
         throw error;
     }
 };
-
-
-
-
 
 // This is CRUD stuff we will need 
 
