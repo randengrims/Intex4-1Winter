@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using MovieINTEX.Data;
 using Microsoft.OpenApi.Models;
 using MovieINTEX.API.Services;
-using MovieINTEX.API.Data; // Adjust this if your CustomUserClaimsPrincipalFactory is elsewhere
+using MovieINTEX.API.Data;
+using RootkitAuth.API.Data; // Adjust this if your CustomUserClaimsPrincipalFactory is elsewhere
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +38,9 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                 "https://green-tree-0f7aa981e.6.azurestaticapps.net",
-                "http://localhost:3000"
+                "http://localhost:3000",
+                "https://localhost:5000", // Your backend/Swagger host
+                "http://localhost:4000"   // In case you hit HTTP in de
             )
             .AllowCredentials()
             .AllowAnyMethod()
@@ -70,6 +73,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/login"; // Adjust as needed
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Use Always in production
 });
+
+builder.Services.AddTransient<IEmailSender<IdentityUser>, NoOpEmailSender<IdentityUser>>();
 
 var app = builder.Build();
 
