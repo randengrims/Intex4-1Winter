@@ -55,7 +55,7 @@ function UserRecommendations() {
             return result;
         };
         return Object.entries(movie)
-            .filter(([key, value]) => typeof value === "boolean" && value === true)
+            .filter(([, value]) => typeof value === "boolean" && value === true)
             .map(([key]) => {
                 const parts = splitCamelCase(key);
                 return parts.map(word => alwaysUpper.has(word.toUpperCase())
@@ -195,7 +195,7 @@ function UserRecommendations() {
                     scrollbarWidth: 'none' // for Firefox
                 }}
                 >
-                {movies.map((m, idx) => {
+                {movies.map((m) => {
                     const sanitizedTitle = sanitizeTitle(m.title);
                     const imageUrl = `https://moviepostersforintex.blob.core.windows.net/movieposters/${encodeURIComponent(sanitizedTitle)}.jpg`;
                     return (

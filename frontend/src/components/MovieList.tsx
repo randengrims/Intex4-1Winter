@@ -63,7 +63,7 @@ function MovieList() {
         };
       
         return Object.entries(movie)
-          .filter(([key, value]) => typeof value === "boolean" && value === true)
+          .filter(([, value]) => typeof value === "boolean" && value === true)
           .map(([key]) => {
             const parts = splitCamelCase(key);
             return parts

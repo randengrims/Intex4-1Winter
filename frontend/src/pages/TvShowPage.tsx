@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Movie } from '../types/Movie';
 import { fetchMovies, fetchSimilarMovies } from "../api/MoviesAPI";
-import PublicHeader from "../components/PublicHeader";
 import MovieFilter from "../components/MovieFilter";
 import MoviePopup from '../components/MoviePopup';
 import ReactStars from "react-rating-stars-component";
@@ -64,7 +63,7 @@ function TvList() {
         };
       
         return Object.entries(movie)
-          .filter(([key, value]) => typeof value === "boolean" && value === true)
+          .filter(([, value]) => typeof value === "boolean" && value === true)
           .map(([key]) => {
             const parts = splitCamelCase(key);
             return parts
