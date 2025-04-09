@@ -6,6 +6,7 @@ import MovieFilter from "../components/MovieFilter";
 import MoviePopup from '../components/MoviePopup';
 import ReactStars from "react-rating-stars-component";
 import StarRating from "../components/StarRating";
+import AuthorizedHeader from "../components/AuthorizedHeader";
 
 const sanitizeTitle = (title: string): string => {
     return title
@@ -199,7 +200,8 @@ function TvList() {
 
     return (
         <>
-            <PublicHeader />
+            <AuthorizedHeader/>
+            <br /><br /><br />
             <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '20px' }}>
                 <input
                     type="text"

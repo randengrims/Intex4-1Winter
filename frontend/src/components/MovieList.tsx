@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Movie } from '../types/Movie';
 import { fetchMovies, fetchSimilarMovies } from "../api/MoviesAPI";
-import PublicHeader from "./PublicHeader";
 import MovieFilter from "./MovieFilter";
 import MoviePopup from './MoviePopup';
 import ReactStars from "react-rating-stars-component";
 import StarRating from "./StarRating";
+import AuthorizedHeader from "./AuthorizedHeader";
 
 const sanitizeTitle = (title: string): string => {
     return title
@@ -199,7 +199,8 @@ function MovieList() {
 
     return (
         <>
-            <PublicHeader />
+            <AuthorizedHeader/>
+            <br /><br /><br />
             <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '20px' }}>
                 <input
                     type="text"

@@ -14,10 +14,10 @@ const AuthorizedHeader: React.FC = () => {
         <nav className='navigation'>
           <ul>
             <li>
-              <Link to='/browse'>Browse</Link>
+              <Link to='/MoviePage'>Movies</Link>
             </li>
             <li>
-              <Link to='/my-list'>My List</Link>
+              <Link to='/TvPage'>TV Shows</Link>
             </li>
             <li>
               <Link to='/originals'>Originals</Link>

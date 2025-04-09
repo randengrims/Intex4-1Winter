@@ -1,11 +1,10 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Movie } from '../types/Movie';
 import { fetchUserRecommendations, fetchSimilarMovies } from "../api/MoviesAPI";
-import PublicHeader from "../components/PublicHeader";
-import MovieFilter from "../components/MovieFilter";
 import MoviePopup from '../components/MoviePopup';
 import ReactStars from "react-rating-stars-component";
 import StarRating from "../components/StarRating";
+import AuthorizedHeader from "../components/AuthorizedHeader";
 
 const sanitizeTitle = (title: string): string => {
     return title
@@ -144,7 +143,8 @@ function UserRecommendations() {
 
     return (
         <>
-            <PublicHeader />
+            <AuthorizedHeader/>
+            <br />
             <h1 style={{ color: 'black', textAlign: 'center', fontSize: '2rem', margin: '1.5rem 0' }}>
                 Based on your viewing history
             </h1>
