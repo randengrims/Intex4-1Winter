@@ -159,7 +159,7 @@ public IActionResult GetMoviesPaged(
 
         
      [HttpGet("GetGenres")]
-public IActionResult GetGenres()
+    public IActionResult GetGenres()
 {
     // Create a list to hold the genre names
     var genreList = new List<string>();
@@ -319,6 +319,78 @@ public IActionResult GetGenres()
             
             return NoContent();
         }
+
+        [HttpGet("GetSimilarMovies/{show_id}")]
+        public IActionResult GetSimilarMovies(string show_id)
+        {
+            var rec = _movieContext.recommendations.FirstOrDefault(r => r.show_id == show_id);
+
+            List<MovieTitle> recommendedMovies = new();
+
+            if (rec != null)
+            {
+                var recommendedIds = new List<string?>
+                {
+                    rec.Recommendation_1,
+                    rec.Recommendation_2,
+                    rec.Recommendation_3,
+                    rec.Recommendation_4,
+                    rec.Recommendation_5
+                }.Where(id => !string.IsNullOrEmpty(id)).ToList();
+
+                recommendedMovies = _movieContext.movies_titles
+                    .Where(m => recommendedIds.Contains(m.show_id))
+                    .ToList();
+            }
+
+            // ✅ Fallback if nothing found or not in recommendations
+            if (recommendedMovies.Count == 0)
+            {
+                var original = _movieContext.movies_titles.FirstOrDefault(m => m.show_id == show_id);
+                if (original == null)
+                {
+                    return NotFound(new { message = "Movie not found." });
+                }
+
+                // ✅ Get all genre fields that are true (reflection-safe)
+                var genresToMatch = original.GetType()
+                    .GetProperties()
+                    .Where(p => p.PropertyType == typeof(bool) && (bool)p.GetValue(original))
+                    .Select(p => p.Name)
+                    .ToList();
+
+                // ✅ Pull all movies into memory (excluding self)
+                var allMovies = _movieContext.movies_titles
+                    .Where(m => m.show_id != show_id)
+                    .ToList();
+
+                // ✅ Match genres in memory
+                recommendedMovies = allMovies
+                    .Where(m => genresToMatch.Any(genre =>
+                        m.GetType().GetProperty(genre)?.GetValue(m) is bool b && b))
+                    .Take(5)
+                    .ToList();
+            }
+
+            return Ok(new { movies = recommendedMovies });
+        }
+        [HttpGet("ratings/average/{show_id}")]
+        public IActionResult GetAverageRating(string show_id)
+        {
+            var ratings = _movieContext.movies_ratings
+                .Where(r => r.show_id == show_id)
+                .ToList();
+
+            if (ratings.Count == 0)
+            {
+                return Ok(new { average = (double?)null });
+            }
+
+            double average = ratings.Average(r => r.rating ?? 0);
+            return Ok(new { average });
+        }
+
+
 
 
     }

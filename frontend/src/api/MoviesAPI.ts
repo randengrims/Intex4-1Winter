@@ -128,14 +128,27 @@ export const fetchMovieById = async (id: string): Promise<Movie> => {
 
 export const fetchSimilarMovies = async (show_id: string): Promise<Movie[]> => {
     try {
-        const response = await fetch(`${API_URL}/GetSimilarMovies/${show_id}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch similar movies');
-        }
-        const data = await response.json();
-        return data.movies || []; // Assuming the backend returns { movies: Movie[] }
+      const response = await fetch(`${API_URL}/GetSimilarMovies/${show_id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch similar movies');
+      }
+      const data = await response.json();
+      return data.movies || [];
     } catch (error) {
-        console.error("Error fetching similar movies:", error);
-        return [];
+      console.error("Error fetching similar movies:", error);
+      return [];
     }
-};
+  };
+  
+
+export const fetchAverageRating = async (show_id: string): Promise<number | null> => {
+    try {
+      const response = await fetch(`${API_URL}/ratings/average/${show_id}`);
+      if (!response.ok) throw new Error("Failed to fetch average rating");
+      const data = await response.json();
+      return data.average ?? null;
+    } catch (error) {
+      console.error("Error fetching average rating:", error);
+      return null;
+    }
+  };

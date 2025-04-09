@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Movie } from '../types/Movie';
-import { fetchMovies } from "../api/MoviesAPI";
+import { fetchMovies, fetchSimilarMovies } from "../api/MoviesAPI";
 import PublicHeader from "./PublicHeader";
 import MovieFilter from "./MovieFilter";
 import MoviePopup from './MoviePopup';
 import ReactStars from "react-rating-stars-component";
+import StarRating from "./StarRating";
 
 const sanitizeTitle = (title: string): string => {
     return title
@@ -28,7 +29,7 @@ function MovieList() {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-    const [userRating, setUserRating] = useState<number | null>(null);
+    // const [userRating, setUserRating] = useState<number | null>(null);
     const [similarMovies, setSimilarMovies] = useState<Movie[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [pageSize] = useState<number>(10);
@@ -37,6 +38,47 @@ function MovieList() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [featuredMovie, setFeaturedMovie] = useState<Movie | null>(null);
+    const [averageRating, setAverageRating] = useState<number | null>(null);
+
+    const getGenreList = (movie: Movie): string => {
+        const alwaysUpper = new Set(["TV", "ID", "USA", "UK"]);
+      
+        const splitCamelCase = (text: string): string[] => {
+          const result: string[] = [];
+          let word = '';
+      
+          for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const isUpper = char === char.toUpperCase() && char !== char.toLowerCase();
+      
+            if (isUpper && word.length > 0 && text[i - 1] !== text[i - 1].toUpperCase()) {
+              result.push(word);
+              word = char;
+            } else {
+              word += char;
+            }
+          }
+      
+          if (word) result.push(word);
+          return result;
+        };
+      
+        return Object.entries(movie)
+          .filter(([key, value]) => typeof value === "boolean" && value === true)
+          .map(([key]) => {
+            const parts = splitCamelCase(key);
+            return parts
+              .map(word => alwaysUpper.has(word.toUpperCase()) 
+                ? word.toUpperCase() 
+                : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+              .join(' ');
+          })
+          .join(', ');
+      };
+      
+
+      
+      
 
     const observer = useRef<IntersectionObserver | null>(null);
     const seenTitles = useRef<Set<string>>(new Set());
@@ -102,30 +144,53 @@ function MovieList() {
     }, [pageNum, pageSize, selectedGenres, searchTerm]);
 
     useEffect(() => {
-        const fetchUserRating = async () => {
+        // const fetchUserRating = async () => {
+        //     if (!selectedMovie) return;
+        //     try {
+        //         const res = await fetch(`https://localhost:5000/api/Movie/ratings/user/testuser/${selectedMovie.show_id}`);
+        //         const data = await res.json();
+        //         if (data.rating !== undefined && data.rating !== null) {
+        //             setUserRating(data.rating);
+        //         } else {
+        //             setUserRating(null);
+        //         }
+        //     } catch (err) {
+        //         console.error("Error fetching user rating:", err);
+        //     }
+        // };
+    
+        const fetchAverageRating = async () => {
             if (!selectedMovie) return;
             try {
-                const res = await fetch(`/api/ratings/user/${selectedMovie.show_id}`);
+                const res = await fetch(`https://localhost:5000/api/Movie/ratings/average/${selectedMovie.show_id}`);
                 const data = await res.json();
-                if (data.rating) {
-                    setUserRating(data.rating);
+                if (data.average !== null && data.average !== undefined) {
+                    setAverageRating(data.average);
                 } else {
-                    setUserRating(null);
+                    setAverageRating(null);
                 }
             } catch (err) {
-                console.error("Error fetching user rating:", err);
+                console.error("Error fetching average rating:", err);
+                setAverageRating(null);
             }
         };
-
+    
         const fetchSimilar = async () => {
             if (!selectedMovie) return;
-            // You can replace this mock logic with real recommendation fetching
-            setSimilarMovies([]); // placeholder for actual recommendation logic
+            try {
+                const sims = await fetchSimilarMovies(selectedMovie.show_id);
+                setSimilarMovies(sims);
+            } catch (err) {
+                console.error("Failed to fetch similar movies", err);
+                setSimilarMovies([]);
+            }
         };
-
-        fetchUserRating();
+    
+        // fetchUserRating();
+        fetchAverageRating();
         fetchSimilar();
     }, [selectedMovie]);
+    
 
     if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;
 
@@ -153,7 +218,16 @@ function MovieList() {
                     }}
                 />
             </div>
-
+            <div style={{ margin: "2rem" }}>
+  <h3>Test Stars:</h3>
+            <ReactStars
+                count={5}
+                value={4}
+                size={30}
+                activeColor="#FFD700"
+                onChange={(rating: number) => console.log("Clicked rating:", rating)}
+            />
+            </div>
             {featuredMovie && (
                 <div style={{ backgroundColor: '#333', color: 'white', padding: '20px', display: 'flex', alignItems: 'center', marginBottom: '20px', justifyContent: 'flex-start' }}>
                     <img
@@ -221,7 +295,29 @@ function MovieList() {
                         />
                         <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', padding: '2rem', background: 'linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.4), rgba(0,0,0,0))', color: 'white', borderBottomLeftRadius: '6px', borderBottomRightRadius: '6px' }}>
                             <h2 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{selectedMovie.title}</h2>
-                            <p style={{ fontSize: '0.9rem', opacity: 0.85 }}>{selectedMovie.release_year} • {selectedMovie.rating} • {selectedMovie.genres}</p>
+                            <p style={{ fontSize: '0.9rem', opacity: 0.85 }}>{selectedMovie.release_year} • {selectedMovie.rating} • {getGenreList(selectedMovie)}</p>
+                            {averageRating !== null ? (
+                                <div style={{ marginTop: '1.5rem' }}>
+                                    <h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '0.3rem' }}>
+                                    Average Rating
+                                    </h3>
+                                    <ReactStars
+                                    key={`avg-${selectedMovie?.show_id}-${averageRating}`}
+                                    count={5}
+                                    value={averageRating}
+                                    edit={false}
+                                    size={30}
+                                    activeColor="#00CED1"
+                                    />
+                                    <p style={{ fontSize: '1rem', fontWeight: 'bold', color: '#FFD700' }}>
+                                    {averageRating.toFixed(1)} ★
+                                    </p>
+                                </div>
+                                ) : (
+                                <p style={{ marginTop: '1.5rem', fontStyle: 'italic', opacity: 0.7 }}>
+                                    This movie hasn’t been rated yet.
+                                </p>
+                                )}
                         </div>
                     </div>
                     <div className="text-white mt-4" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -238,27 +334,16 @@ function MovieList() {
                                 <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Cast</h3>
                                 <p style={{ marginBottom: '1rem' }}>{selectedMovie.cast}</p>
                                 <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Genres</h3>
-                                <p>{selectedMovie.genres}</p>
+                                <p>{getGenreList(selectedMovie)}</p>
                             </div>
                         </div>
 
-                        {userRating !== null ? (
-                            <div style={{ marginTop: '1.5rem' }}>
-                                <h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '0.3rem' }}>Your Rating</h3>
-                                <ReactStars
-                                    key={`rating-${selectedMovie.show_id}-${userRating}`}
-                                    count={5}
-                                    value={userRating}
-                                    edit={false}
-                                    size={30}
-                                    activeColor="#FFD700"
-                                />
-                            </div>
-                        ) : (
-                            <p style={{ marginTop: '1.5rem', fontStyle: 'italic', opacity: 0.7 }}>
-                                You haven’t rated this movie yet.
-                            </p>
-                        )}
+                        <div style={{ marginTop: '1.5rem' }}>
+                        <h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '0.3rem' }}>Your Rating</h3>
+                        <StarRating />
+
+                    </div>
+
 
                         {similarMovies.length > 0 && (
                             <div style={{ marginTop: '2rem' }}>

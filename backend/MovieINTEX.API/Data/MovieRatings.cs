@@ -9,7 +9,7 @@ namespace MovieINTEX.Models
         public string user_id { get; set; }
 
         [ForeignKey("MovieTitle")]
-        public int show_id { get; set; }
+        public string show_id { get; set; }
 
         public int? rating { get; set; }
     }
