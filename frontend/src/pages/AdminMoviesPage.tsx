@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Movie } from '../types/Movie';
 import {
-  fetchMoviesPaged,
-  deleteMovie,
-} from '../api/AdminMoviesAPI';
+  fetchMovies,
+  deleteMovie
+} from '../api/MoviesAPI';
 import Pagination from '../components/pagination';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
@@ -21,7 +21,7 @@ const AdminMoviesPage = () => {
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await fetchMoviesPaged(pageSize, pageNum);
+        const data = await fetchMovies(pageSize, pageNum,[],'');
         setMovies(data.movies);
         setTotalPages(Math.ceil(data.totalNumMovies / pageSize));
       } catch (err) {
@@ -68,7 +68,7 @@ const AdminMoviesPage = () => {
         <NewMovieForm
           onSuccess={() => {
             setShowForm(false);
-            fetchMoviesPaged(pageSize, pageNum).then((data) =>
+            fetchMovies(pageSize, pageNum,[],'').then((data) =>
               setMovies(data.movies),
             );
           }}
@@ -81,7 +81,7 @@ const AdminMoviesPage = () => {
           movie={editingMovie}
           onSuccess={() => {
             setEditingMovie(null);
-            fetchMoviesPaged(pageSize, pageNum).then((data) =>
+            fetchMovies(pageSize, pageNum,[],'').then((data) =>
               setMovies(data.movies),
             );
           }}
@@ -110,6 +110,7 @@ const AdminMoviesPage = () => {
           {movies.map((m) => (
             <tr key={m.show_id}>
               <td>{m.show_id}</td>
+              <td>{m.title}</td>
               <td>{m.type}</td>
               <td>{m.director}</td>
               <td>{m.cast}</td>
@@ -118,7 +119,13 @@ const AdminMoviesPage = () => {
               <td>{m.rating}</td>
               <td>{m.duration}</td>
               <td>{m.description}</td>
-              <td>{m.genres}</td>
+              <td>
+                {Object.entries(m)
+                  .filter(([_, value]) => typeof value === 'boolean' && value === true)
+                  .map(([genre]) => genre)
+                  .join(', ')}
+              </td>
+
               <td>
                 <button
                   className='btn btn-primary btn-sm w-100 mb-1'

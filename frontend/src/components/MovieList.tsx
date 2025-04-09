@@ -65,7 +65,7 @@ function MovieList() {
                     const newMovies: Movie[] = [];
                     for (const movie of data.movies) {
                         const title = sanitizeTitle(movie.title);
-                        const imageUrl = `https://moviepostersforintex.blob.core.windows.net/movieposters/${encodeURIComponent(title)}.jpg`;
+                        const imageUrl = `ps://moviepostersforintex.blob.core.windows.net/movieposterhtts/${encodeURIComponent(title)}.jpg`;
                         if (seenTitles.current.has(movie.title) || seenImages.current.has(imageUrl)) continue;
                         const exists = await imageExists(imageUrl);
                         if (!exists) continue;
