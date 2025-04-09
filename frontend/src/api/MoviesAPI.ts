@@ -1,6 +1,6 @@
 import { Movie } from "../types/Movie";
 
-interface FetchMoviesResponse{
+interface FetchMoviesResponse {
     movies: Movie[];
     totalNumMovies: number;
 }
@@ -10,17 +10,26 @@ const API_URL = 'https://localhost:5000/api/Movie';
 export const fetchMovies = async (
     pageSize: number,
     pageNum: number,
-    selectedGenres: string[]= [] // Default to an empty array if not provided
+    selectedGenres: string[] = [],
+    searchTerm: string = "" // ADD THIS
 ): Promise<FetchMoviesResponse> => {
     try {
-        // Ensure selectedGenres is always an array before processing
-        const genreParam = selectedGenres.join(','); 
-        
-        // Build the URL
-        const url = `${API_URL}/GetMovies?pageSize=${pageSize}&pageNum=${pageNum}${selectedGenres.length ? `&projectTypes=${encodeURIComponent(genreParam)}` : ''}`;
-        
+        let url = `${API_URL}/GetMovies?pageSize=${pageSize}&pageNum=${pageNum}`;
+
+        // Add genre filters
+        if (selectedGenres.length) {
+            selectedGenres.forEach(genre => {
+                url += `&genreList=${encodeURIComponent(genre)}`;
+            });
+        }
+
+        // Add search term
+        if (searchTerm) {
+            url += `&search=${encodeURIComponent(searchTerm)}`;
+        }
+
         const response = await fetch(url);
-        
+
         if (!response.ok) {
             const errorText = await response.text();
             console.error("Response Error: ", errorText);
@@ -40,6 +49,9 @@ export const fetchMovies = async (
         throw error;
     }
 };
+
+
+
 
 
 // This is CRUD stuff we will need 
@@ -98,4 +110,12 @@ export const deleteMovie = async (show_id: string): Promise<void> => {
         console.error('Error deleting movie:', error);
         throw error;
     }
+};
+
+export const fetchMovieById = async (id: string): Promise<Movie> => {
+    const response = await fetch(`${API_URL}/GetMovie/${id}`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch movie');
+    }
+    return await response.json();
 };

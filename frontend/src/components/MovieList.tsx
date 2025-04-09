@@ -2,7 +2,9 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { Movie } from '../types/Movie';
 import { fetchMovies } from "../api/MoviesAPI";
 import PublicHeader from "./PublicHeader";
-import MovieFilter from "./MovieFilter";
+import GenreFilter from "./MovieFilter";
+import MoviePopup from "./MoviePopup";
+
 
 const sanitizeTitle = (title: string): string => {
     return title
@@ -13,7 +15,6 @@ const sanitizeTitle = (title: string): string => {
         .trim();
 };
 
-// Function to check if an image URL exists
 const imageExists = async (url: string): Promise<boolean> => {
     return new Promise((resolve) => {
         const img = new Image();
@@ -24,8 +25,10 @@ const imageExists = async (url: string): Promise<boolean> => {
 };
 
 function MovieList() {
-    const [selectedGenres, setSelectedGenres] = useState<string[]>([]); // Local state for selected genres
     const [movies, setMovies] = useState<Movie[]>([]);
+    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+    const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+    const [searchTerm, setSearchTerm] = useState<string>("");
     const [pageSize] = useState<number>(10);
     const [pageNum, setPageNum] = useState<number>(1);
     const [hasMore, setHasMore] = useState(true);
@@ -34,65 +37,55 @@ function MovieList() {
     const [featuredMovie, setFeaturedMovie] = useState<Movie | null>(null);
 
     const observer = useRef<IntersectionObserver | null>(null);
-
-    // Refs to track previously seen titles and image URLs
     const seenTitles = useRef<Set<string>>(new Set());
     const seenImages = useRef<Set<string>>(new Set());
 
-    const lastMovieRef = useCallback(
-        (node: HTMLDivElement | null) => {
-            if (loading) return;
-            if (observer.current) observer.current.disconnect();
-            observer.current = new IntersectionObserver(entries => {
-                if (entries[0].isIntersecting && hasMore) {
-                    setPageNum(prev => prev + 1);
-                }
-            });
-            if (node) observer.current.observe(node);
-        },
-        [loading, hasMore]
-    );
+    const lastMovieRef = useCallback((node: HTMLDivElement | null) => {
+        if (loading) return;
+        if (observer.current) observer.current.disconnect();
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+                setPageNum(prev => prev + 1);
+            }
+        });
+        if (node) observer.current.observe(node);
+    }, [loading, hasMore]);
 
     useEffect(() => {
+        if (pageNum === 1) {
+            seenTitles.current.clear();
+            seenImages.current.clear();
+        }
+
         const loadMovies = async () => {
             try {
                 setLoading(true);
-                const data = await fetchMovies(pageSize, pageNum, selectedGenres);
+                const data = await fetchMovies(pageSize, pageNum, selectedGenres, searchTerm);
                 if (Array.isArray(data.movies)) {
                     const newMovies: Movie[] = [];
-
-                    // Loop through the fetched movies
                     for (const movie of data.movies) {
                         const title = sanitizeTitle(movie.title);
                         const imageUrl = `https://moviepostersforintex.blob.core.windows.net/movieposters/${encodeURIComponent(title)}.jpg`;
-
-                        // Skip duplicate titles or images
                         if (seenTitles.current.has(movie.title) || seenImages.current.has(imageUrl)) continue;
-
                         const exists = await imageExists(imageUrl);
-                        if (!exists) continue; // Skip if the image doesn't exist
-
-                        // Mark the title and image as seen
+                        if (!exists) continue;
                         seenTitles.current.add(movie.title);
                         seenImages.current.add(imageUrl);
-
-                        // Add movie to the list of new movies
                         newMovies.push(movie);
                     }
-
-                    setMovies(prev => [...prev, ...newMovies]);
+                    setMovies(prev => pageNum === 1 ? newMovies : [...prev, ...newMovies]);
                     const totalPages = Math.ceil(data.totalNumMovies / pageSize);
                     setHasMore(pageNum < totalPages);
 
-                    // If featured movie is not already stored in localStorage, select one
                     let selectedFeaturedMovie = localStorage.getItem('featuredMovie');
-                    if (!selectedFeaturedMovie) {
+                    if (!selectedFeaturedMovie && newMovies.length) {
                         const randomIndex = Math.floor(Math.random() * newMovies.length);
                         selectedFeaturedMovie = JSON.stringify(newMovies[randomIndex]);
                         localStorage.setItem('featuredMovie', selectedFeaturedMovie);
                     }
-
-                    setFeaturedMovie(JSON.parse(selectedFeaturedMovie));
+                    if (selectedFeaturedMovie) {
+                        setFeaturedMovie(JSON.parse(selectedFeaturedMovie));
+                    }
                 } else {
                     throw new Error("Invalid movies data");
                 }
@@ -104,21 +97,13 @@ function MovieList() {
         };
 
         loadMovies();
-    }, [pageNum, pageSize,selectedGenres]);
+    }, [pageNum, pageSize, selectedGenres, searchTerm]);
 
     if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;
-
-    const gridStyle: React.CSSProperties = {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(5, 1fr)', // Show 5 movies per row
-        gap: '16px',
-        padding: '16px'
-    };
-
     const cardStyle: React.CSSProperties = {
         width: '100%',
         height: '300px',
-        backgroundColor: '#1f1f1f',
+        backgroundColor: '#1F1F1F',
         borderRadius: '8px',
         overflow: 'hidden',
         position: 'relative',
@@ -126,121 +111,67 @@ function MovieList() {
         transform: 'scale(1)',
         transition: 'transform 0.3s ease'
     };
-
-    const imageStyle: React.CSSProperties = {
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-        display: 'block'
-    };
-
-    const overlayStyle: React.CSSProperties = {
-        position: 'absolute',
-        bottom: '0',
-        left: '0',
-        right: '0',
-        height: '60px',
-        background: 'rgba(0, 0, 0, 0.7)',
-        color: 'white',
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 10px',
-        fontSize: '14px',
-        opacity: 0,
-        transition: 'opacity 0.3s ease'
-    };
-
-    const cardHoverStyle: React.CSSProperties = {
-        transform: 'scale(1.05)',
-        cursor: 'pointer'
-    };
-
-    const overlayHoverStyle: React.CSSProperties = {
-        opacity: 1
-    };
-
-    const bannerStyle: React.CSSProperties = {
-        backgroundColor: '#333',
-        color: 'white',
-        padding: '20px',
-        display: 'flex',
-        alignItems: 'center',
-        marginBottom: '20px',
-        justifyContent: 'flex-start',
-    };
-
-    const textStyle: React.CSSProperties = {
-        marginLeft: '20px',
-        maxWidth: '60%',
-        textAlign: 'left', // Left-aligned text
-    };
-
-    const buttonStyle: React.CSSProperties = {
-        marginTop: '10px',
-        padding: '10px 20px',
-        backgroundColor: '#ff8c00',
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        transition: 'background-color 0.3s ease',
-    };
-
-    const buttonHoverStyle: React.CSSProperties = {
-        backgroundColor: '#cc6b00',
-    };
-
-    const handleButtonClick = () => {
-        // Handle "See Details" button click (e.g., navigate to a detailed page)
-        alert(`See more details about: ${featuredMovie?.title}`);
-    };
-
     return (
         <>
-            {<PublicHeader/>}
-            <MovieFilter selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} />
+            <PublicHeader />
             <br /><br />
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '20px' }}>
+                <input
+                    type="text"
+                    placeholder="Search by title..."
+                    value={searchTerm}
+                    onChange={(e) => {
+                        setSearchTerm(e.target.value);
+                        setPageNum(1);
+                        setMovies([]);
+                    }}
+                    style={{ padding: '10px', fontSize: '16px', width: '300px' }}
+                />
+                <GenreFilter
+                    selectedGenres={selectedGenres}
+                    setSelectedGenres={(genres) => {
+                        setSelectedGenres(genres);
+                        setPageNum(1);
+                        setMovies([]);
+                    }}
+                />
+            </div>
+
             {featuredMovie && (
-                <div style={bannerStyle}>
+                <div style={{ backgroundColor: '#333', color: 'white', padding: '20px', display: 'flex', alignItems: 'center', marginBottom: '20px', justifyContent: 'flex-start' }}>
                     <img
                         src={`https://moviepostersforintex.blob.core.windows.net/movieposters/${encodeURIComponent(sanitizeTitle(featuredMovie.title))}.jpg`}
                         alt={featuredMovie.title}
                         style={{ width: '200px', height: '300px', objectFit: 'cover' }}
-                        onError={(e) => {
-                            (e.currentTarget as HTMLImageElement).src = "/Click.jpg";
-                        }}
+                        onError={(e) => (e.currentTarget as HTMLImageElement).src = "/Click.jpg"}
                     />
-                    <div style={textStyle}>
+                    <div style={{ marginLeft: '20px', maxWidth: '60%', textAlign: 'left' }}>
                         <h2>Featured Movie:</h2>
                         <h3>{featuredMovie.title} ({featuredMovie.release_year})</h3>
                         <p><strong>Rating:</strong> {featuredMovie.rating}</p>
                         <p><strong>Description:</strong> {featuredMovie.description}</p>
-                        <button 
-                            style={buttonStyle} 
-                            onMouseEnter={(e) => (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#ff8c00'}
-                            onMouseLeave={(e) => (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#ff8c00'}
-                            onClick={handleButtonClick}
-                        >
+                        <button style={{ marginTop: '10px', padding: '10px 20px', backgroundColor: '#ff8c00', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
                             See Details
                         </button>
                     </div>
                 </div>
             )}
-            <div style={gridStyle}>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px', padding: '16px' }}>
                 {movies.map((m, idx) => {
                     const isLast = idx === movies.length - 1;
                     const sanitizedTitle = sanitizeTitle(m.title);
                     const imageUrl = `https://moviepostersforintex.blob.core.windows.net/movieposters/${encodeURIComponent(sanitizedTitle)}.jpg`;
-
                     return (
                         <div
                             key={m.show_id}
                             ref={isLast ? lastMovieRef : null}
                             style={cardStyle}
+                            onClick={() => setSelectedMovie(m)}
                             onMouseEnter={e => {
-                                (e.currentTarget as HTMLDivElement).style.transform = cardHoverStyle.transform!;
+                                (e.currentTarget as HTMLDivElement).style.transform = 'scale(1.05)';
                                 const overlay = (e.currentTarget as HTMLDivElement).querySelector('.overlay') as HTMLDivElement;
-                                if (overlay) overlay.style.opacity = overlayHoverStyle.opacity!.toString();
+                                if (overlay) overlay.style.opacity = '1';
                             }}
                             onMouseLeave={e => {
                                 (e.currentTarget as HTMLDivElement).style.transform = 'scale(1)';
@@ -251,19 +182,82 @@ function MovieList() {
                             <img
                                 src={imageUrl}
                                 alt={m.title}
-                                style={imageStyle}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                 loading="lazy"
-                                onError={(e) => {
-                                    (e.currentTarget as HTMLImageElement).src = "/Click.jpg";
-                                }}
+                                onError={(e) => (e.currentTarget as HTMLImageElement).src = "/Click.jpg"}
                             />
-                            <div className="overlay" style={overlayStyle}>
+                            <div className="overlay" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '60px', background: 'rgba(0, 0, 0, 0.7)', color: 'white', display: 'flex', alignItems: 'center', padding: '0 10px', fontSize: '14px', opacity: 0, transition: 'opacity 0.3s ease' }}>
                                 {m.title}
                             </div>
                         </div>
                     );
                 })}
+                            {selectedMovie && (
+            <MoviePopup open={!!selectedMovie} onClose={() => setSelectedMovie(null)}>
+                {/* Top section: poster image with overlay text */}
+                <div style={{ position: 'relative', marginBottom: '1rem' }}>
+                <img
+                    src={`https://moviepostersforintex.blob.core.windows.net/movieposters/${encodeURIComponent(sanitizeTitle(selectedMovie.title))}.jpg`}
+                    alt={selectedMovie.title}
+                    style={{
+                    width: '100%',
+                    maxHeight: '500px',
+                    objectFit: 'cover',
+                    borderRadius: '6px',
+                    display: 'block',
+                    }}
+                    onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = "/Click.jpg";
+                    }}
+                />
+                <div
+                    style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    width: '100%',
+                    padding: '2rem',
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.4), rgba(0,0,0,0))',
+                    color: 'white',
+                    borderBottomLeftRadius: '6px',
+                    borderBottomRightRadius: '6px',
+                    }}
+                >
+                    <h2 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    {selectedMovie.title}
+                    </h2>
+                    <p style={{ fontSize: '0.9rem', opacity: 0.85 }}>
+                    {selectedMovie.release_year} • {selectedMovie.rating} • {selectedMovie.genres}
+                    </p>
+                </div>
+                </div>
+            {/* Scrollable content below poster */}
+            <div className="text-white mt-4" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {/* Two-column layout */}
+            <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+                {/* Left Column – Summary, Director, Country */}
+                <div style={{ flex: '2 1 60%' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Summary</h3>
+                <p style={{ lineHeight: '1.6', marginBottom: '1rem' }}>{selectedMovie.description}</p>
+                {/* Director + Country live here now */}
+                <div style={{ fontSize: '0.9rem', opacity: 0.85 }}>
+                    <p><strong>Director:</strong> {selectedMovie.director}</p>
+                    <p><strong>Country:</strong> {selectedMovie.country}</p>
+                </div>
+                </div>
+                {/* Right Column – Cast & Genres */}
+                <div style={{ flex: '1 1 35%' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Cast</h3>
+                <p style={{ marginBottom: '1rem' }}>{selectedMovie.cast}</p>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Genres</h3>
+                <p>{selectedMovie.genres}</p>
+                </div>
             </div>
+            </div>
+            </MoviePopup>
+            )}
+            </div>
+
             {loading && <p style={{ textAlign: 'center', marginTop: '1rem', color: '#ccc' }}>Loading more movies...</p>}
             {!hasMore && <p style={{ textAlign: 'center', marginTop: '1rem', color: '#ccc' }}>No more movies to load.</p>}
         </>
