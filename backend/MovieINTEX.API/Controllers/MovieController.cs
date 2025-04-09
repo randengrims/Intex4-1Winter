@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieINTEX.Data;
+using MovieINTEX.Models;
 
 namespace MovieINTEX.Controllers
 {
@@ -234,5 +235,91 @@ public IActionResult GetGenres()
             }
             return Ok(movie);
         }
+        
+        [HttpPost("AddMovie")]
+        public IActionResult AddProject([FromBody]MovieTitle newMovie)
+        {
+            _movieContext.movies_titles.Add(newMovie);
+            _movieContext.SaveChanges();
+            return Ok(newMovie);
+        }
+        
+        
+        [HttpPut("updatemovie/{show_id}")]
+        public IActionResult UpdateMovie(string show_id, [FromBody] MovieTitle updatedMovie)
+        {
+            var existingMovie = _movieContext.movies_titles.Find(show_id);
+            if (existingMovie == null)
+            {
+                return NotFound($"Movie with ID {show_id} not found.");
+            }
+
+            // Update basic movie info
+            existingMovie.type = updatedMovie.type;
+            existingMovie.title = updatedMovie.title;
+            existingMovie.director = updatedMovie.director;
+            existingMovie.cast = updatedMovie.cast;
+            existingMovie.country = updatedMovie.country;
+            existingMovie.release_year = updatedMovie.release_year;
+            existingMovie.rating = updatedMovie.rating;
+            existingMovie.duration = updatedMovie.duration;
+            existingMovie.description = updatedMovie.description;
+
+            // Update genre flags
+            existingMovie.Action = updatedMovie.Action;
+            existingMovie.Adventure = updatedMovie.Adventure;
+            existingMovie.AnimeSeriesInternationalTVShows = updatedMovie.AnimeSeriesInternationalTVShows;
+            existingMovie.BritishTVShowsDocuseriesInternationalTVShows = updatedMovie.BritishTVShowsDocuseriesInternationalTVShows;
+            existingMovie.Children = updatedMovie.Children;
+            existingMovie.Comedies = updatedMovie.Comedies;
+            existingMovie.ComediesDramasInternationalMovies = updatedMovie.ComediesDramasInternationalMovies;
+            existingMovie.ComediesInternationalMovies = updatedMovie.ComediesInternationalMovies;
+            existingMovie.ComediesRomanticMovies = updatedMovie.ComediesRomanticMovies;
+            existingMovie.CrimeTVShowsDocuseries = updatedMovie.CrimeTVShowsDocuseries;
+            existingMovie.Documentaries = updatedMovie.Documentaries;
+            existingMovie.DocumentariesInternationalMovies = updatedMovie.DocumentariesInternationalMovies;
+            existingMovie.Docuseries = updatedMovie.Docuseries;
+            existingMovie.Dramas = updatedMovie.Dramas;
+            existingMovie.DramasInternationalMovies = updatedMovie.DramasInternationalMovies;
+            existingMovie.DramasRomanticMovies = updatedMovie.DramasRomanticMovies;
+            existingMovie.FamilyMovies = updatedMovie.FamilyMovies;
+            existingMovie.Fantasy = updatedMovie.Fantasy;
+            existingMovie.HorrorMovies = updatedMovie.HorrorMovies;
+            existingMovie.InternationalMoviesThrillers = updatedMovie.InternationalMoviesThrillers;
+            existingMovie.InternationalTVShowsRomanticTVShowsTVDramas = updatedMovie.InternationalTVShowsRomanticTVShowsTVDramas;
+            existingMovie.KidsTV = updatedMovie.KidsTV;
+            existingMovie.LanguageTVShows = updatedMovie.LanguageTVShows;
+            existingMovie.Musicals = updatedMovie.Musicals;
+            existingMovie.NatureTV = updatedMovie.NatureTV;
+            existingMovie.RealityTV = updatedMovie.RealityTV;
+            existingMovie.Spirituality = updatedMovie.Spirituality;
+            existingMovie.TVAction = updatedMovie.TVAction;
+            existingMovie.TVComedies = updatedMovie.TVComedies;
+            existingMovie.TVDramas = updatedMovie.TVDramas;
+            existingMovie.TalkShowsTVComedies = updatedMovie.TalkShowsTVComedies;
+            existingMovie.Thrillers = updatedMovie.Thrillers;
+
+            _movieContext.movies_titles.Update(existingMovie);
+            _movieContext.SaveChanges();
+
+            return Ok(existingMovie);
+        }
+    
+        [HttpDelete("DeleteMovie/{show_id}")]
+        public IActionResult DeleteMovie(string show_id)
+        {
+            var movie = _movieContext.movies_titles.Find(show_id);
+
+            if (movie == null)
+            {
+                return NotFound(new { message = "Movie not found" });
+            }
+            _movieContext.movies_titles.Remove(movie);
+            _movieContext.SaveChanges();
+            
+            return NoContent();
+        }
+
+
     }
 }

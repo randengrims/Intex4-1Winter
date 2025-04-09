@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, useEffect, useRef, ChangeEvent, FormEvent } from 'react';
 import { Movie } from '../types/Movie';
 import { addMovie } from '../api/MoviesAPI';
 
@@ -19,6 +19,8 @@ const genreOptions = [
 ];
 
 const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
+  const nextIdRef = useRef<number>(10000); // Start at 10000
+
   const [formData, setFormData] = useState<Movie>({
     show_id: '',
     type: '',
@@ -65,33 +67,38 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
     Thrillers: false,
   });
 
+  // Set initial show_id when component mounts
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      show_id: nextIdRef.current.toString(),
+    }));
+  }, []);
+
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-    const handleSubmit = async (e: FormEvent) => {
-      e.preventDefault();
-    
-      // Create a copy of formData to safely modify it
-      const updatedFormData = { ...formData };
-    
-      // Normalize genre flag key and set it to true
-      const genreFlagKey = genreOptions.find((g) => g === formData.genres);
-      if (genreFlagKey) {
-        const normalizedKey = genreFlagKey.replace(/[^a-zA-Z0-9]/g, '');
-        (updatedFormData as any)[normalizedKey] = true;
-      }
-    
-      try {
-        await addMovie(updatedFormData);
-        onSuccess(); // Refresh movie list or close form
-      } catch (err) {
-        console.error("Failed to submit movie:", err);
-        // Optional: show error to user with setError or toast
-      }
-    };
-  
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    const updatedFormData = { ...formData };
+
+    const genreFlagKey = genreOptions.find((g) => g === formData.genres);
+    if (genreFlagKey) {
+      const normalizedKey = genreFlagKey.replace(/[^a-zA-Z0-9]/g, '');
+      (updatedFormData as any)[normalizedKey] = true;
+    }
+
+    try {
+      await addMovie(updatedFormData);
+      nextIdRef.current++; // increment for next use
+      onSuccess();
+    } catch (err) {
+      console.error("Failed to submit movie:", err);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -108,42 +115,42 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
 
       <label>
         Title:
-        <input type='text' name='title' value={formData.title} onChange={handleChange} />
+        <input type="text" name="title" value={formData.title} onChange={handleChange} />
       </label>
 
       <label>
         Director:
-        <input type='text' name='director' value={formData.director} onChange={handleChange} />
+        <input type="text" name="director" value={formData.director} onChange={handleChange} />
       </label>
 
       <label>
         Cast:
-        <input type='text' name='cast' value={formData.cast} onChange={handleChange} />
+        <input type="text" name="cast" value={formData.cast} onChange={handleChange} />
       </label>
 
       <label>
         Country:
-        <input type='text' name='country' value={formData.country} onChange={handleChange} />
+        <input type="text" name="country" value={formData.country} onChange={handleChange} />
       </label>
 
       <label>
         Release Year:
-        <input type='number' name='release_year' value={formData.release_year || ''} onChange={handleChange} />
+        <input type="number" name="release_year" value={formData.release_year || ''} onChange={handleChange} />
       </label>
 
       <label>
         Rating:
-        <input type='text' name='rating' value={formData.rating} onChange={handleChange} />
+        <input type="text" name="rating" value={formData.rating} onChange={handleChange} />
       </label>
 
       <label>
         Duration:
-        <input type='text' name='duration' value={formData.duration} onChange={handleChange} />
+        <input type="text" name="duration" value={formData.duration} onChange={handleChange} />
       </label>
 
       <label>
         Description:
-        <input type='text' name='description' value={formData.description} onChange={handleChange} />
+        <input type="text" name="description" value={formData.description} onChange={handleChange} />
       </label>
 
       <label>
@@ -156,8 +163,8 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
         </select>
       </label>
 
-      <button type='submit'>Add Movie</button>
-      <button type='button' onClick={onCancel}>Cancel</button>
+      <button type="submit">Add Movie</button>
+      <button type="button" onClick={onCancel}>Cancel</button>
     </form>
   );
 };

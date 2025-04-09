@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Movie } from '../types/Movie';
 import {
   fetchMovies,
@@ -18,10 +18,12 @@ const AdminMoviesPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
 
+  const editFormRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await fetchMovies(pageSize, pageNum,[],'');
+        const data = await fetchMovies(pageSize, pageNum, [], '');
         setMovies(data.movies);
         setTotalPages(Math.ceil(data.totalNumMovies / pageSize));
       } catch (err) {
@@ -33,6 +35,13 @@ const AdminMoviesPage = () => {
 
     loadMovies();
   }, [pageSize, pageNum]);
+
+  // Scroll to top of edit form when editingMovie is set
+  useEffect(() => {
+    if (editingMovie && editFormRef.current) {
+      editFormRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [editingMovie]);
 
   const handleDelete = async (show_id: string) => {
     const confirmDelete = window.confirm(
@@ -58,7 +67,10 @@ const AdminMoviesPage = () => {
       {!showForm && (
         <button
           className='btn btn-success mb-3'
-          onClick={() => setShowForm(true)}
+          onClick={() => {
+            setEditingMovie(null);
+            setShowForm(true);
+          }}
         >
           Add Movie
         </button>
@@ -68,7 +80,7 @@ const AdminMoviesPage = () => {
         <NewMovieForm
           onSuccess={() => {
             setShowForm(false);
-            fetchMovies(pageSize, pageNum,[],'').then((data) =>
+            fetchMovies(pageSize, pageNum, [], '').then((data) =>
               setMovies(data.movies),
             );
           }}
@@ -77,16 +89,18 @@ const AdminMoviesPage = () => {
       )}
 
       {editingMovie && (
-        <EditMovieForm
-          movie={editingMovie}
-          onSuccess={() => {
-            setEditingMovie(null);
-            fetchMovies(pageSize, pageNum,[],'').then((data) =>
-              setMovies(data.movies),
-            );
-          }}
-          onCancel={() => setEditingMovie(null)}
-        />
+        <div ref={editFormRef}>
+          <EditMovieForm
+            movie={editingMovie}
+            onSuccess={() => {
+              setEditingMovie(null);
+              fetchMovies(pageSize, pageNum, [], '').then((data) =>
+                setMovies(data.movies),
+              );
+            }}
+            onCancel={() => setEditingMovie(null)}
+          />
+        </div>
       )}
 
       <table className='table table-bordered table-striped'>
@@ -110,8 +124,8 @@ const AdminMoviesPage = () => {
           {movies.map((m) => (
             <tr key={m.show_id}>
               <td>{m.show_id}</td>
-              <td>{m.title}</td>
               <td>{m.type}</td>
+              <td>{m.title}</td>
               <td>{m.director}</td>
               <td>{m.cast}</td>
               <td>{m.country}</td>
@@ -125,11 +139,14 @@ const AdminMoviesPage = () => {
                   .map(([genre]) => genre)
                   .join(', ')}
               </td>
-
               <td>
                 <button
                   className='btn btn-primary btn-sm w-100 mb-1'
-                  onClick={() => setEditingMovie(m)}
+                  onClick={() => {
+                    console.log("CLICKED:", m);
+                    setShowForm(false);
+                    setEditingMovie(m);
+                  }}
                 >
                   Edit
                 </button>

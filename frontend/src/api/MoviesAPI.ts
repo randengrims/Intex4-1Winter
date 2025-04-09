@@ -78,39 +78,45 @@ export const addMovie =async (newMovie:Movie): Promise<Movie> => {
     }
 };
 
-export const updateMovie = async (show_id: string, updatedMovie:Movie) : Promise<Movie> => {
+export const updateMovie = async (show_id: string, updatedMovie: Movie): Promise<Movie> => {
     try {
-        const response = await fetch(`${API_URL}/UpdateProject/${show_id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type' : 'application/json',
-            },
-            body: JSON.stringify(updatedMovie)
-        });
-
-        return await response.json();
-        
+      const response = await fetch(`${API_URL}/updatemovie/${show_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedMovie),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update movie');
+      }
+  
+      return await response.json();
     } catch (error) {
-        console.error('Error updating movie:', error);
-        throw error;
+      console.error('Error updating movie:', error);
+      throw error;
     }
-};
+  };
+  
 
-export const deleteMovie = async (show_id: string): Promise<void> => {
+  export const deleteMovie = async (show_id: string): Promise<void> => {
     try {
-        const response = await fetch(`${API_URL}/DeleteProject/${show_id}`,
-        {
-            method: 'DELETE'
-        });
-
-        if (!response.ok){
-            throw new Error('Failed to delete movie');
-        }
-    } catch (error){
-        console.error('Error deleting movie:', error);
-        throw error;
+      const response = await fetch(`${API_URL}/deletemovie/${show_id}`, {
+        method: 'DELETE'
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Delete response error:", errorText);
+        throw new Error('Failed to delete movie');
+      }
+    } catch (error) {
+      console.error('Error deleting movie:', error);
+      throw error;
     }
-};
+  };
+  
 
 export const fetchMovieById = async (id: string): Promise<Movie> => {
     const response = await fetch(`${API_URL}/GetMovie/${id}`);
