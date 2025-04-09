@@ -7,6 +7,7 @@ import {
 import Pagination from '../components/pagination';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
+import AuthorizeView from '../components/AuthorizeView';
 
 const AdminMoviesPage = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -52,110 +53,115 @@ const AdminMoviesPage = () => {
   if (error) return <p className='text-red-500'>Error: {error}</p>;
 
   return (
-    <div>
-      <h1>Admin - Movies</h1>
+    <AuthorizeView>
+      <div>
+        <h1>Admin - Movies</h1>
 
-      {!showForm && (
-        <button
-          className='btn btn-success mb-3'
-          onClick={() => setShowForm(true)}
-        >
-          Add Movie
-        </button>
-      )}
+        {!showForm && (
+          <button
+            className='btn btn-success mb-3'
+            onClick={() => setShowForm(true)}
+          >
+            Add Movie
+          </button>
+        )}
 
-      {showForm && (
-        <NewMovieForm
-          onSuccess={() => {
-            setShowForm(false);
-            fetchMovies(pageSize, pageNum,[],'').then((data) =>
-              setMovies(data.movies),
-            );
-          }}
-          onCancel={() => setShowForm(false)}
-        />
-      )}
+        {showForm && (
+          <NewMovieForm
+            onSuccess={() => {
+              setShowForm(false);
+              fetchMovies(pageSize, pageNum, [], '').then((data) =>
+                setMovies(data.movies),
+              );
+            }}
+            onCancel={() => setShowForm(false)}
+          />
+        )}
 
-      {editingMovie && (
-        <EditMovieForm
-          movie={editingMovie}
-          onSuccess={() => {
-            setEditingMovie(null);
-            fetchMovies(pageSize, pageNum,[],'').then((data) =>
-              setMovies(data.movies),
-            );
-          }}
-          onCancel={() => setEditingMovie(null)}
-        />
-      )}
+        {editingMovie && (
+          <EditMovieForm
+            movie={editingMovie}
+            onSuccess={() => {
+              setEditingMovie(null);
+              fetchMovies(pageSize, pageNum, [], '').then((data) =>
+                setMovies(data.movies),
+              );
+            }}
+            onCancel={() => setEditingMovie(null)}
+          />
+        )}
 
-      <table className='table table-bordered table-striped'>
-        <thead className='table-dark'>
-          <tr>
-            <th>Show ID </th>
-            <th>Type</th>
-            <th>Title</th>
-            <th>Director</th>
-            <th>Cast</th>
-            <th>Country</th>
-            <th>Release Year</th>
-            <th>Rating</th>
-            <th>Duration</th>
-            <th>Description</th>
-            <th>Genres</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {movies.map((m) => (
-            <tr key={m.show_id}>
-              <td>{m.show_id}</td>
-              <td>{m.title}</td>
-              <td>{m.type}</td>
-              <td>{m.director}</td>
-              <td>{m.cast}</td>
-              <td>{m.country}</td>
-              <td>{m.release_year}</td>
-              <td>{m.rating}</td>
-              <td>{m.duration}</td>
-              <td>{m.description}</td>
-              <td>
-                {Object.entries(m)
-                  .filter(([_, value]) => typeof value === 'boolean' && value === true)
-                  .map(([genre]) => genre)
-                  .join(', ')}
-              </td>
-
-              <td>
-                <button
-                  className='btn btn-primary btn-sm w-100 mb-1'
-                  onClick={() => setEditingMovie(m)}
-                >
-                  Edit
-                </button>
-                <button
-                  className='btn btn-danger btn-sm w-100'
-                  onClick={() => handleDelete(m.show_id)}
-                >
-                  Delete
-                </button>
-              </td>
+        <table className='table table-bordered table-striped'>
+          <thead className='table-dark'>
+            <tr>
+              <th>Show ID </th>
+              <th>Type</th>
+              <th>Title</th>
+              <th>Director</th>
+              <th>Cast</th>
+              <th>Country</th>
+              <th>Release Year</th>
+              <th>Rating</th>
+              <th>Duration</th>
+              <th>Description</th>
+              <th>Genres</th>
+              <th></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {movies.map((m) => (
+              <tr key={m.show_id}>
+                <td>{m.show_id}</td>
+                <td>{m.title}</td>
+                <td>{m.type}</td>
+                <td>{m.director}</td>
+                <td>{m.cast}</td>
+                <td>{m.country}</td>
+                <td>{m.release_year}</td>
+                <td>{m.rating}</td>
+                <td>{m.duration}</td>
+                <td>{m.description}</td>
+                <td>
+                  {Object.entries(m)
+                    .filter(
+                      ([_, value]) =>
+                        typeof value === 'boolean' && value === true,
+                    )
+                    .map(([genre]) => genre)
+                    .join(', ')}
+                </td>
 
-      <Pagination
-        currentPage={pageNum}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        onPageChange={setPageNum}
-        onPageSizeChange={(newSize) => {
-          setPageSize(newSize);
-          setPageNum(1);
-        }}
-      />
-    </div>
+                <td>
+                  <button
+                    className='btn btn-primary btn-sm w-100 mb-1'
+                    onClick={() => setEditingMovie(m)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className='btn btn-danger btn-sm w-100'
+                    onClick={() => handleDelete(m.show_id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <Pagination
+          currentPage={pageNum}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          onPageChange={setPageNum}
+          onPageSizeChange={(newSize) => {
+            setPageSize(newSize);
+            setPageNum(1);
+          }}
+        />
+      </div>
+    </AuthorizeView>
   );
 };
 

@@ -2,9 +2,9 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MovieINTEX.Data;
-using MovieINTEX.API.Data;
 using Microsoft.OpenApi.Models;
-using MovieINTEX.API.Services; // Adjust this if your CustomUserClaimsPrincipalFactory is elsewhere
+using MovieINTEX.API.Services;
+using MovieINTEX.API.Data; // Adjust this if your CustomUserClaimsPrincipalFactory is elsewhere
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,8 +48,9 @@ builder.Services.AddCors(options =>
 // Authorization & Identity
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-    .AddEntityFrameworkStores<ApplicationDBContext>();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDBContext>()
+    .AddDefaultTokenProviders();
 
 // Extended Identity options
 builder.Services.Configure<IdentityOptions>(options =>

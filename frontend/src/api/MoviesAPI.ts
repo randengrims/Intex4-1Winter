@@ -28,7 +28,10 @@ export const fetchMovies = async (
             url += `&search=${encodeURIComponent(searchTerm)}`;
         }
 
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            method: 'GET', // This might be the problem. If it is, delete it
+            credentials: 'include',
+        });
 
         if (!response.ok) {
             const errorText = await response.text();

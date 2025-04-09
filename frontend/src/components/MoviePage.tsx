@@ -44,29 +44,3 @@ const MoviePage = () => {
   );
 };
 export default MoviePage;
-3:06
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css'
-import AdminMoviesPage from './pages/AdminMoviesPage';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import HomePage from './pages/HomePage';
-import MoviePage from './pages/MoviePage'
-import CreateAccountPage from './pages/CreateAccountPage'; // adjust path as needed
-function App() {
-  return (
-    <>
-      <Router>
-        <Routes>
-          {/* <Route path='/' element={<LandingPage />} />
-          <Route path='/' element={<LoginPage />} /> */}
-          <Route path='/adminmovies' element={<AdminMoviesPage />} />
-          <Route path='/privacypolicy' element={<PrivacyPolicyPage />} />
-          <Route path='/HomePage' element={<HomePage/>}/>
-          <Route path="/movies/:show_id" element={<MoviePage />} />
-          <Route path="/create-account" element={<CreateAccountPage />} />
-        </Routes>
-      </Router>
-    </>
-  );
-}
-export default App

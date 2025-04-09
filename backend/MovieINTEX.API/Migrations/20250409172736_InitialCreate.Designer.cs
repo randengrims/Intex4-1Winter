@@ -11,7 +11,7 @@ using MovieINTEX.API.Data;
 namespace MovieINTEX.API.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20250408221807_InitialCreate")]
+    [Migration("20250409172736_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
