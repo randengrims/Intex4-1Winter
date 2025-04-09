@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieINTEX.Data;
+using MovieINTEX.Models;
 
 namespace MovieINTEX.Controllers
 {
@@ -233,6 +234,13 @@ public IActionResult GetGenres()
                 return NotFound();
             }
             return Ok(movie);
+        }
+        [HttpPost("AddMovie")]
+        public IActionResult AddMovie([FromBody] MovieTitle newMovie)
+        {
+            _movieContext.movies_titles.Add(newMovie);
+            _movieContext.SaveChanges();
+            return Ok(newMovie);
         }
     }
 }
