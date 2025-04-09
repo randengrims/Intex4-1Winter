@@ -1,6 +1,6 @@
 import React from 'react';
 import './magnific-popup.css'; // Your existing popup styles
-import './MoviePopup.css'; // New animation + layout enhancements
+import './moviePopup.css'; // New animation + layout enhancements
 type MoviePopupProps = {
   open: boolean;
   onClose: () => void;
