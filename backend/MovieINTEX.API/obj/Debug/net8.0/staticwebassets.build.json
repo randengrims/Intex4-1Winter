@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "sOC5702xzp+O9Ec0i7ZALKCb7TcNW3dNRpN1fb9FXMk=",
+  "Source": "MovieINTEX.API",
+  "BasePath": "_content/MovieINTEX.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

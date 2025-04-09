@@ -11,3 +11,17 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+# .NET build artifacts
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code workspace files
+.vscode/
+
+# Logs
+*.log
