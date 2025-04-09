@@ -1,0 +1,46 @@
+# ==========================
+# .NET & Visual Studio Build Artifacts
+# ==========================
+bin/
+obj/
+out/
+
+# Auto-generated files
+**/AssemblyInfo.cs
+**/AssemblyAttributes.cs
+**/*.g.cs
+**/*.g.i.cs
+**/*.cache
+
+# User-specific files
+*.user
+*.suo
+*.sln.docstates
+*.dbmdl
+*.log
+
+# ==========================
+# IDEs and Editor Settings
+# ==========================
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains Rider / IntelliJ IDEA
+.idea/
+*.iml
+
+# JetBrains-specific project files (from your original file)
+shelf/
+workspace.xml
+projectSettingsUpdater.xml
+.idea.Intex2.iml
+contentModel.xml
+modules.xml
+
+# Editor-based HTTP Client requests (from your original file)
+httpRequests/
+
+# Datasource local storage ignored files (from your original file)
+dataSources/
+dataSources.local.xml
