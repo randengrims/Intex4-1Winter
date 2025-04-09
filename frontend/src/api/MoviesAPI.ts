@@ -125,3 +125,17 @@ export const fetchMovieById = async (id: string): Promise<Movie> => {
     }
     return await response.json();
 };
+
+export const fetchSimilarMovies = async (show_id: string): Promise<Movie[]> => {
+    try {
+        const response = await fetch(`${API_URL}/GetSimilarMovies/${show_id}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch similar movies');
+        }
+        const data = await response.json();
+        return data.movies || []; // Assuming the backend returns { movies: Movie[] }
+    } catch (error) {
+        console.error("Error fetching similar movies:", error);
+        return [];
+    }
+};
