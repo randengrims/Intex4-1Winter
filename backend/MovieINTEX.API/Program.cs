@@ -31,7 +31,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
-                "https://green-tree-0f7aa981e.6.azurestaticapps.net",
+                "https://green-mushroom-0dae9dc1e.6.azurestaticapps.net",
                 "http://localhost:3000"
             )
             .AllowCredentials()

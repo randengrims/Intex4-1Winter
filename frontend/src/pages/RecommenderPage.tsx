@@ -117,7 +117,7 @@ function UserRecommendations() {
         const fetchAverageRating = async () => {
             if (!selectedMovie) return;
             try {
-                const res = await fetch(`https://localhost:5000/api/Movie/ratings/average/${selectedMovie.show_id}`);
+                const res = await fetch(`https://cinenichegroup0401-backend-affvedfvhnhyc4fp.eastus-01.azurewebsites.net/api/Movie/ratings/average/${selectedMovie.show_id}`);
                 const data = await res.json();
                 setAverageRating(data?.average ?? null);
             } catch {
