@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './LoginPage.css';
+import PublicHeader from '../components/PublicHeader'; // Import your header component
 
 const LoginPage: React.FC = () => {
   const [errorVisible, setErrorVisible] = useState(false);
@@ -13,6 +14,8 @@ const LoginPage: React.FC = () => {
   return (
     <div className='login-body'>
       <div className='login-container'>
+        {/* Public Header */}
+        <PublicHeader />
         <h2>Sign In</h2>
         <form onSubmit={handleSubmit}>
           {/* Email Field */}

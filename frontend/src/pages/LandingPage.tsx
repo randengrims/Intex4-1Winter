@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Slider from 'react-slick';
 import './LandingPage.css';
 import PublicHeader from '../components/PublicHeader'; // Import your header component
@@ -30,6 +31,17 @@ const moviePosters = [
 
 const LandingPage: React.FC = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [email, setEmail] = useState('');
+  const navigate = useNavigate(); // Hook for navigation
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const handleGetStarted = () => {
+    // Navigate to the sign-up page, passing the email in state
+    navigate('/sign-up', { state: { email } });
+  };
 
   const faqs = [
     {
@@ -81,11 +93,15 @@ const LandingPage: React.FC = () => {
           <div className='cta d-flex justify-content-center mt-4'>
             <input
               type='email'
+              value={email}
+              onChange={handleEmailChange}
               placeholder='Email address'
               className='form-control me-2'
               style={{ maxWidth: '300px' }}
             />
-            <button className='btn btn-danger'>Get Started</button>
+            <button className='btn btn-danger' onClick={handleGetStarted}>
+              Get Started
+            </button>
           </div>
         </div>
       </header>
