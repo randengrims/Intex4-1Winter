@@ -1,11 +1,14 @@
 import React from 'react';
+import './PrivacyPolicyPage.css'; // Import the CSS file for styling
+import PublicHeader from '../components/PublicHeader'; // Import your header component
 
 const PrivacyPolicy: React.FC = () => {
   return (
-    <div className='w-full flex justify-start'>
-      <div className='w-full max-w-4xl px-4 py-12 text-left text-gray-800 leading-relaxed text-base'>
+    <div className='page-container'>
+      {/* Public Header */}
+      <PublicHeader />
+      <div className='content-container'>
         <h1 className='text-4xl font-bold mb-8'>Privacy Policy</h1>
-
         <p>
           Welcome to our Privacy Policy. Your privacy is critically important to
           us.

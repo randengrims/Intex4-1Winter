@@ -1,0 +1,197 @@
+html,
+body {
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* SIGN UP SECTION */
+.signup {
+  padding: 4rem 5%;
+  background-color: #f8f9fa;
+}
+
+.signup .container {
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 3rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.signup h1 {
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  color: var(--text-dark);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.signup p {
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  color: #555;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.signup .cta {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.signup .cta input[type='email'],
+.signup .cta input[type='password'] {
+  padding: 0.8rem 1rem;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  width: 100%;
+  max-width: 300px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-bottom: 1.5rem;
+}
+
+.signup .cta button {
+  padding: 0.8rem 1.5rem;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  background-color: var(--goldenrod);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 300px;
+}
+
+.signup .cta button:hover {
+  background-color: var(--gold);
+}
+
+.signup .back-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  margin-top: 1rem;
+}
+
+.signup .back-btn a {
+  color: var(--goldenrod);
+  text-decoration: none;
+}
+
+.signup .back-btn a:hover {
+  text-decoration: underline;
+}
+
+/* Pricing Section */
+.pricing {
+  background-color: #f8f9fa;
+  padding: 4rem 5%;
+}
+
+.pricing h2 {
+  font-size: clamp(2rem, 3vw, 3rem);
+  text-align: center;
+  color: var(--text-dark);
+  margin-bottom: 3rem;
+}
+
+.pricing .card-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.pricing .card {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 2rem;
+  width: 300px;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pricing .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.pricing .card h3 {
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+.pricing .card p {
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.pricing .card .price {
+  font-size: clamp(2rem, 3vw, 3rem);
+  color: var(--goldenrod);
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.pricing .card button {
+  background-color: var(--goldenrod);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  max-width: 220px;
+}
+
+.pricing .card button:hover {
+  background-color: var(--gold);
+}
+
+.pricing .card.selected {
+  border: 2px solid var(--goldenrod);
+  box-shadow: 0 8px 15px rgba(255, 215, 0, 0.2);
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  .signup .container {
+    padding: 2rem;
+  }
+
+  .signup h1 {
+    font-size: 2rem;
+  }
+
+  .signup p {
+    font-size: 1rem;
+  }
+
+  .signup .cta input[type='email'],
+  .signup .cta input[type='password'],
+  .signup .cta button {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .pricing .card-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pricing .card {
+    width: 100%;
+    max-width: 350px;
+  }
+}

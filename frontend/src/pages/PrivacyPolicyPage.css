@@ -1,0 +1,163 @@
+:root {
+  --goldenrod: #daa520;
+  --gold: gold;
+  --background-dark: #dadada;
+  --text-light: rgba(255, 255, 255, 0.87);
+  --text-dark: #0c0c0c;
+  --white: #ffffff;
+  --spacing-small: 1rem;
+  --spacing-medium: 2rem;
+  --spacing-large: 3rem;
+}
+
+/* Global Body Styling */
+body {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  background-color: var(--background-dark);
+  color: var(--text-light);
+  min-width: 320px;
+  margin: 0;
+}
+
+/* Page Container */
+.page-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  margin: 0 auto;
+  max-width: 1200px; /* Center the container */
+}
+
+/* Content Container */
+.content-container {
+  width: 100%;
+  padding: 1rem 2rem;
+  text-align: left;
+  color: var(--text-dark);
+  line-height: 1.8;
+  background-color: var(--background-dark);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+}
+
+/* Global Text Styles */
+h1,
+h2 {
+  color: var(--primary-dark);
+}
+
+/* Add a global margin for ordered lists */
+ol {
+  margin-left: 2rem;
+}
+
+hr {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  border: 0;
+  border-top: 1px solid #ddd;
+}
+
+.list-disc {
+  list-style-type: disc;
+}
+
+.ml-6 {
+  margin-left: 1.5rem;
+}
+
+/* Text Sizes */
+.text-4xl {
+  font-size: 2.25rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.mb-8 {
+  margin-bottom: 2rem;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .content-container {
+    padding: 1rem; /* Reduce padding on tablets */
+  }
+
+  .text-4xl {
+    font-size: 2rem; /* Adjust font size for smaller screens */
+  }
+
+  .text-2xl {
+    font-size: 1.25rem; /* Adjust font size for smaller screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1rem; /* Add padding for smaller screens */
+    flex-direction: column;
+  }
+
+  .content-container {
+    padding: 1rem; /* Reduce padding for small screens */
+  }
+
+  h1 {
+    font-size: 1.75rem; /* Adjust header size for small screens */
+  }
+
+  h2 {
+    font-size: 1.25rem; /* Adjust subtitle size */
+  }
+
+  ol {
+    margin-left: 1rem; /* Reduce left margin on small screens */
+  }
+
+  .text-4xl {
+    font-size: 1.75rem;
+  }
+
+  .text-2xl {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-container {
+    padding: 0.5rem; /* Tighten up padding for very small screens */
+  }
+
+  h1 {
+    font-size: 1.5rem; /* Even smaller text for very small screens */
+  }
+
+  h2 {
+    font-size: 1.125rem;
+  }
+
+  .text-4xl {
+    font-size: 1.5rem;
+  }
+
+  .text-2xl {
+    font-size: 1rem;
+  }
+}

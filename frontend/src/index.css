@@ -17,6 +17,12 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
 body {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -28,6 +34,7 @@ body {
   align-items: center;
   overflow-x: hidden;
   min-width: 320px;
+  justify-content: space-between;
 }
 
 /* Links */
