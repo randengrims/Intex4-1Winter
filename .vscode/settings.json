@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/7ac18a4b-78a5-4450-923c-90f8bd86a414/resourceGroups/appsvc_windows_eastus/providers/Microsoft.Web/sites/CineNicheGroup0401-Backend",
+    "appService.deploySubpath": "backend/MovieINTEX.API/publish"
+}
