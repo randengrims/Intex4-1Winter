@@ -28,6 +28,7 @@ out/
 
 # JetBrains Rider / IntelliJ IDEA
 .idea/
+**/.idea/
 *.iml
 
 # JetBrains-specific project files (from your original file)

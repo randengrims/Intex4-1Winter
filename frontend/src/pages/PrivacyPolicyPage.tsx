@@ -1,11 +1,14 @@
 import React from 'react';
+import './PrivacyPolicyPage.css'; // Import the CSS file for styling
+import PublicHeader from '../components/PublicHeader'; // Import your header component
 
 const PrivacyPolicy: React.FC = () => {
   return (
-    <div className='max-w-4xl mx-auto px-4 py-12'>
-      <h1 className='text-4xl font-bold mb-8 text-center'>Privacy Policy</h1>
-
-      <div className='space-y-6 text-gray-800 leading-relaxed'>
+    <div className='page-container'>
+      {/* Public Header */}
+      <PublicHeader />
+      <div className='content-container'>
+        <h1 className='text-4xl font-bold mb-8'>Privacy Policy</h1>
         <p>
           Welcome to our Privacy Policy. Your privacy is critically important to
           us.
@@ -54,6 +57,7 @@ const PrivacyPolicy: React.FC = () => {
             </ul>
           </li>
         </ol>
+
         <hr />
 
         <h2 className='text-2xl font-semibold mt-6'>
@@ -85,6 +89,7 @@ const PrivacyPolicy: React.FC = () => {
             </ul>
           </li>
         </ol>
+
         <hr />
 
         <h2 className='text-2xl font-semibold mt-6'>
@@ -106,6 +111,7 @@ const PrivacyPolicy: React.FC = () => {
             </ul>
           </li>
         </ol>
+
         <hr />
 
         <h2 className='text-2xl font-semibold mt-6'>
@@ -128,10 +134,12 @@ const PrivacyPolicy: React.FC = () => {
             </ul>
           </li>
         </ol>
+
         <p>
           We do <strong>not</strong> sell or rent your personal information to
           third parties for marketing purposes.
         </p>
+
         <hr />
 
         <h2 className='text-2xl font-semibold mt-6'>
@@ -144,6 +152,7 @@ const PrivacyPolicy: React.FC = () => {
           appropriate safeguards are in place, such as Standard Contractual
           Clauses approved by the European Commission.
         </p>
+
         <hr />
 
         <h2 className='text-2xl font-semibold mt-6'>
@@ -190,6 +199,7 @@ const PrivacyPolicy: React.FC = () => {
             </ul>
           </li>
         </ol>
+
         <hr />
 
         <h2 className='text-2xl font-semibold mt-6'>7. Your Choices</h2>
@@ -211,6 +221,7 @@ const PrivacyPolicy: React.FC = () => {
             </ul>
           </li>
         </ol>
+
         <hr />
 
         <h2 className='text-2xl font-semibold mt-6'>8. Security</h2>
@@ -219,6 +230,7 @@ const PrivacyPolicy: React.FC = () => {
           protect your information against unauthorized access, loss, or misuse.
           However, no system is completely secure.
         </p>
+
         <hr />
 
         <h2 className='text-2xl font-semibold mt-6'>9. Data Retention</h2>
@@ -227,6 +239,7 @@ const PrivacyPolicy: React.FC = () => {
           the Service, comply with legal obligations, and resolve disputes. When
           data is no longer required, it is securely deleted or anonymized.
         </p>
+
         <hr />
 
         <h2 className='text-2xl font-semibold mt-6'>10. Children's Privacy</h2>
@@ -236,6 +249,7 @@ const PrivacyPolicy: React.FC = () => {
           personal information from children. If we learn that we have done so,
           we will take steps to delete such information promptly.
         </p>
+
         <hr />
 
         <h2 className='text-2xl font-semibold mt-6'>

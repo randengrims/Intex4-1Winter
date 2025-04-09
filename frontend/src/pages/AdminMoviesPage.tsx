@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Movie } from '../types/Movie';
-import { deleteMovie, fetchMovies } from '../api/MoviesAPI';
-import Pagination from '../components/Pagination';
+import {
+  fetchMovies,
+  deleteMovie
+} from '../api/MoviesAPI';
+import Pagination from '../components/pagination';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
 
@@ -18,8 +21,8 @@ const AdminMoviesPage = () => {
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await fetchMovies(pageSize, pageNum, []);
-        setMovies(data.books);
+        const data = await fetchMovies(pageSize, pageNum,[],'');
+        setMovies(data.movies);
         setTotalPages(Math.ceil(data.totalNumMovies / pageSize));
       } catch (err) {
         setError((err as Error).message);
@@ -31,7 +34,7 @@ const AdminMoviesPage = () => {
     loadMovies();
   }, [pageSize, pageNum]);
 
-  const handleDelete = async (show_id: number) => {
+  const handleDelete = async (show_id: string) => {
     const confirmDelete = window.confirm(
       'Are you sure you want to delete this movie?',
     );
@@ -65,7 +68,7 @@ const AdminMoviesPage = () => {
         <NewMovieForm
           onSuccess={() => {
             setShowForm(false);
-            fetchMovies(pageSize, pageNum, []).then((data) =>
+            fetchMovies(pageSize, pageNum,[],'').then((data) =>
               setMovies(data.movies),
             );
           }}
@@ -75,10 +78,10 @@ const AdminMoviesPage = () => {
 
       {editingMovie && (
         <EditMovieForm
-          project={editingMovie}
+          movie={editingMovie}
           onSuccess={() => {
             setEditingMovie(null);
-            fetchMovies(pageSize, pageNum, []).then((data) =>
+            fetchMovies(pageSize, pageNum,[],'').then((data) =>
               setMovies(data.movies),
             );
           }}
@@ -100,18 +103,15 @@ const AdminMoviesPage = () => {
             <th>Duration</th>
             <th>Description</th>
             <th>Genres</th>
-            {/* This is a dropdown with ALL of the boolean
-            options. CAN select more than 1 */}
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {/* Fill this below part in with the variables and the table they come
-          from*/}
           {movies.map((m) => (
             <tr key={m.show_id}>
-              <td>{m.type}</td>
+              <td>{m.show_id}</td>
               <td>{m.title}</td>
+              <td>{m.type}</td>
               <td>{m.director}</td>
               <td>{m.cast}</td>
               <td>{m.country}</td>
@@ -119,7 +119,13 @@ const AdminMoviesPage = () => {
               <td>{m.rating}</td>
               <td>{m.duration}</td>
               <td>{m.description}</td>
-              <td>{m.genres}</td>
+              <td>
+                {Object.entries(m)
+                  .filter(([_, value]) => typeof value === 'boolean' && value === true)
+                  .map(([genre]) => genre)
+                  .join(', ')}
+              </td>
+
               <td>
                 <button
                   className='btn btn-primary btn-sm w-100 mb-1'

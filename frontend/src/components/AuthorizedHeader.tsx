@@ -1,0 +1,41 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './AuthorizedHeader.css';
+
+const AuthorizedHeader: React.FC = () => {
+  return (
+    <header className='private-header'>
+      <div className='header-container'>
+        {/* Brand logo on the left */}
+        <div className='brand-logo'>
+          <Link to='/'>CineNiche</Link>
+        </div>
+        {/* Navigation links */}
+        <nav className='navigation'>
+          <ul>
+            <li>
+              <Link to='/browse'>Browse</Link>
+            </li>
+            <li>
+              <Link to='/my-list'>My List</Link>
+            </li>
+            <li>
+              <Link to='/originals'>Originals</Link>
+            </li>
+          </ul>
+        </nav>
+        {/* User menu */}
+        <div className='user-menu'>
+          <Link to='/profile' className='profile-link'>
+            Profile
+          </Link>
+          <Link to='/logout' className='logout-link'>
+            Logout
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default AuthorizedHeader;

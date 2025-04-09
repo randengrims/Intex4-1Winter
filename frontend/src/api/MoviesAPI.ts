@@ -1,6 +1,6 @@
 import { Movie } from "../types/Movie";
 
-interface FetchMoviesResponse{
+interface FetchMoviesResponse {
     movies: Movie[];
     totalNumMovies: number;
 }
@@ -8,13 +8,31 @@ interface FetchMoviesResponse{
 const API_URL = 'https://localhost:5000/api/Movie';
 
 export const fetchMovies = async (
-    pageSize: number, 
-    pageNum: number
+    pageSize: number,
+    pageNum: number,
+    selectedGenres: string[] = [],
+    searchTerm: string = "" // ADD THIS
 ): Promise<FetchMoviesResponse> => {
     try {
-        const response = await fetch(`${API_URL}/GetMovies?pageSize=${pageSize}&pageNum=${pageNum}`);
-        
+        let url = `${API_URL}/GetMovies?pageSize=${pageSize}&pageNum=${pageNum}`;
+
+        // Add genre filters
+        if (selectedGenres.length) {
+            selectedGenres.forEach(genre => {
+                url += `&genreList=${encodeURIComponent(genre)}`;
+            });
+        }
+
+        // Add search term
+        if (searchTerm) {
+            url += `&search=${encodeURIComponent(searchTerm)}`;
+        }
+
+        const response = await fetch(url);
+
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Response Error: ", errorText);
             throw new Error('Failed to fetch movies');
         }
 
@@ -23,8 +41,8 @@ export const fetchMovies = async (
         console.log("Parsed Data:", data);
 
         return {
-            movies: data, // data *is* the array
-            totalNumMovies: data.length // or set this based on a separate endpoint if paginated
+            movies: data.movies,
+            totalNumMovies: data.totalNumMovies
         };
 
     } catch (error) {
@@ -32,7 +50,6 @@ export const fetchMovies = async (
         throw error;
     }
 };
-
 
 // This is CRUD stuff we will need 
 
@@ -90,4 +107,12 @@ export const deleteMovie = async (show_id: string): Promise<void> => {
         console.error('Error deleting movie:', error);
         throw error;
     }
+};
+
+export const fetchMovieById = async (id: string): Promise<Movie> => {
+    const response = await fetch(`${API_URL}/GetMovie/${id}`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch movie');
+    }
+    return await response.json();
 };

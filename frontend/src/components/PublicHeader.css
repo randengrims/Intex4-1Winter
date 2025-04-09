@@ -1,0 +1,64 @@
+/* Header Styling */
+.public-header {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.9); /* Dark background similar to Netflix */
+    padding: 0.5rem 1rem;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Text Goldenrod Styling for Anchor Tag */
+  .text-goldenrod {
+    color: #daa520; /* Goldenrod color */
+    transition: color 0.3s ease;
+  }
+  
+  /* Hover effect for anchor tag */
+  .text-goldenrod:hover {
+    color: gold; /* Change to gold on hover */
+  }
+  
+  /* Ensure link color is inherited correctly inside .public-header */
+  .public-header .text-goldenrod {
+    color: #daa520; /* Ensure goldenrod color applies */
+  }
+  
+  /* Remove the default blue color for anchor tags */
+  a {
+    color: inherit; /* Inherit color from parent elements */
+    text-decoration: none; /* Remove underline */
+  }
+  
+  /* Sign-In Button */
+  .btn-goldenrod {
+    padding: 0.75rem 1.5rem; /* Adjust padding */
+    font-size: 1rem;
+    background-color: #daa520; /* Goldenrod color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease; /* Add subtle animation */
+  }
+  
+  .btn-goldenrod:hover {
+    background-color: gold; /* Hover color */
+    transform: scale(1.05); /* Adds a slight scale effect */
+  }
+  
+  .btn-goldenrod:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(218, 165, 32, 0.5); /* Custom focus outline */
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .btn-goldenrod {
+      font-size: 0.9rem;
+      padding: 0.6rem 1.2rem;
+    }
+  }
