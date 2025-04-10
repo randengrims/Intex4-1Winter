@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/MovieINTEX.API.csproj": {}
+    "/Users/spencerbullock/Desktop/DeployedWebsiteSecurity/Intex4-1Winter/backend/MovieINTEX.API/MovieINTEX.API.csproj": {}
   },
   "projects": {
-    "/Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/MovieINTEX.API.csproj": {
+    "/Users/spencerbullock/Desktop/DeployedWebsiteSecurity/Intex4-1Winter/backend/MovieINTEX.API/MovieINTEX.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/MovieINTEX.API.csproj",
+        "projectUniqueName": "/Users/spencerbullock/Desktop/DeployedWebsiteSecurity/Intex4-1Winter/backend/MovieINTEX.API/MovieINTEX.API.csproj",
         "projectName": "MovieINTEX.API",
-        "projectPath": "/Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/MovieINTEX.API.csproj",
+        "projectPath": "/Users/spencerbullock/Desktop/DeployedWebsiteSecurity/Intex4-1Winter/backend/MovieINTEX.API/MovieINTEX.API.csproj",
         "packagesPath": "/Users/spencerbullock/.nuget/packages/",
-        "outputPath": "/Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/obj/",
+        "outputPath": "/Users/spencerbullock/Desktop/DeployedWebsiteSecurity/Intex4-1Winter/backend/MovieINTEX.API/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/spencerbullock/.nuget/NuGet/NuGet.Config"
@@ -43,6 +43,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.13, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.0.13, )"

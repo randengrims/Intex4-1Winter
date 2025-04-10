@@ -1,85 +1,165 @@
-import React, { useState } from 'react';
-import './LoginPage.css';
-import PublicHeader from '../components/PublicHeader'; // Import your header component
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import PublicHeader from '../components/PublicHeader';
 
-const LoginPage: React.FC = () => {
-  const [errorVisible, setErrorVisible] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+function LoginPage() {
+  // state variables for email and passwords
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [rememberme, setRememberme] = useState<boolean>(false);
+
+  // state variable for error messages
+  const [error, setError] = useState<string>('');
+  const navigate = useNavigate();
+
+  // handle change events for input fields
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, type, checked, value } = e.target;
+    if (type === 'checkbox') {
+      setRememberme(checked);
+    } else if (name === 'email') {
+      setEmail(value);
+    } else if (name === 'password') {
+      setPassword(value);
+    }
+  };
+
+  const handleRegisterClick = () => {
+    navigate('/register');
+  };
+
+  // handle submit event for the form
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrorVisible(true); // Show error message
-    setTimeout(() => setErrorVisible(false), 3000); // Hide after 3 seconds
+    setError(''); // Clear any previous errors
+
+    if (!email || !password) {
+      setError('Please fill in all fields.');
+      return;
+    }
+
+    const loginUrl = rememberme
+      ? 'https://localhost:5000/login?useCookies=true'
+      : 'https://localhost:5000/login?useSessionCookies=true';
+
+    try {
+      const response = await fetch(loginUrl, {
+        method: 'POST',
+        credentials: 'include', // ✅ Ensures cookies are sent & received
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      // Ensure we only parse JSON if there is content
+      let data = null;
+      const contentLength = response.headers.get('content-length');
+      if (contentLength && parseInt(contentLength, 10) > 0) {
+        data = await response.json();
+      }
+
+      if (!response.ok) {
+        throw new Error(data?.message || 'Invalid email or password.');
+      }
+
+      navigate('/HomePage');
+    } catch (error: any) {
+      setError(error.message || 'Error logging in.');
+      console.error('Fetch attempt failed:', error);
+    }
   };
 
   return (
-    <div className='login-body'>
-      <div className='login-container'>
-        {/* Public Header */}
-        <PublicHeader />
-        <h2>Sign In</h2>
-        <form onSubmit={handleSubmit}>
-          {/* Email Field */}
-          <div className='mb-3'>
-            <label htmlFor='email' className='form-label'>
-              Email
-            </label>
-            <input
-              type='email'
-              className='form-control'
-              id='email'
-              name='email'
-              autoComplete='email'
-              placeholder='Enter your email'
-              required
-            />
+    <div className="container">
+      <PublicHeader/>
+      <br /><br />
+
+      <div className="row">
+        <div className="card border-0 shadow rounded-3 ">
+          <div className="card-body p-4 p-sm-5">
+            <h5 className="card-title text-center mb-5 fw-light fs-5">
+              Sign In
+            </h5>
+            <form onSubmit={handleSubmit}>
+              <div className="form-floating mb-3">
+                <input
+                  className="form-control"
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={email}
+                  onChange={handleChange}
+                />
+                <label htmlFor="email">Email address</label>
+              </div>
+              <div className="form-floating mb-3">
+                <input
+                  className="form-control"
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={password}
+                  onChange={handleChange}
+                />
+                <label htmlFor="password">Password</label>
+              </div>
+
+              <div className="form-check mb-3">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value=""
+                  id="rememberme"
+                  name="rememberme"
+                  checked={rememberme}
+                  onChange={handleChange}
+                />
+                <label className="form-check-label" htmlFor="rememberme">
+                  Remember password
+                </label>
+              </div>
+              <div className="d-grid mb-2">
+                <button
+                  className="btn btn-primary btn-login text-uppercase fw-bold"
+                  type="submit"
+                >
+                  Sign in
+                </button>
+              </div>
+              <div className="d-grid mb-2">
+                <button
+                  className="btn btn-primary btn-login text-uppercase fw-bold"
+                  onClick={handleRegisterClick}
+                >
+                  Register
+                </button>
+              </div>
+              <hr className="my-4" />
+              <div className="d-grid mb-2">
+                <button
+                  className="btn btn-google btn-login text-uppercase fw-bold"
+                  type="button"
+                >
+                  <i className="fa-brands fa-google me-2"></i> Sign in with
+                  Google
+                </button>
+              </div>
+              <div className="d-grid mb-2">
+                <button
+                  className="btn btn-facebook btn-login text-uppercase fw-bold"
+                  type="button"
+                >
+                  <i className="fa-brands fa-facebook-f me-2"></i> Sign in with
+                  Facebook
+                </button>
+              </div>
+            </form>
+            {error && <p className="error">{error}</p>}
           </div>
-
-          {/* Password Field */}
-          <div className='mb-3'>
-            <label htmlFor='password' className='form-label'>
-              Password
-            </label>
-            <input
-              type='password'
-              className='form-control'
-              id='password'
-              name='password'
-              autoComplete='current-password'
-              placeholder='Enter your password'
-              required
-            />
-          </div>
-
-          {/* Submit Button */}
-          <button type='submit' className='btn-login btn-goldenrod'>
-            Sign In
-          </button>
-        </form>
-
-        {/* Social Media Buttons Container */}
-        <div className='social-buttons'>
-          {/* Google Sign-In */}
-          <button className='btn-social btn-google'>
-            <span className='icon'>{/* Google icon can be added here */}</span>
-            Sign In with Google
-          </button>
-
-          {/* Facebook Sign-In */}
-          <button className='btn-social btn-facebook'>
-            <span className='icon'>
-              {/* Facebook icon can be added here */}
-            </span>
-            Sign In with Facebook
-          </button>
         </div>
-
-        {/* Error Message */}
-        <p className={`error ${errorVisible ? 'opacity-100' : 'opacity-0'}`}>
-          Invalid credentials. Please try again.
-        </p>
       </div>
     </div>
   );
-};
+}
 
 export default LoginPage;
