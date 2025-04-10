@@ -1,40 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Slider from 'react-slick';
+import { fetchMovies } from '../api/MoviesAPI';
+import { Movie } from '../types/Movie';
+import MoviePreviewPopup from '../components/MoviePreviewPopup'; // Import the preview popup
 import './LandingPage.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-const moviePosters = [
-  '1 Chance 2 Dance.jpg',
-  '2 Hearts.jpg',
-  '3 Idiots.jpg',
-  '4th Republic.jpg',
-  '5 Star Christmas.jpg',
-  '6 Bullets.jpg',
-  '7 Seven.jpg',
-  '9.jpg',
-  '10 jours en or.jpg',
-  '12 Years Promise.jpg',
-  'How to Train Your Dragon 2.jpg',
-  '14 Cameras.jpg',
-  '15Aug.jpg',
-  '16 Blocks.jpg',
-  '17 Again.jpg',
-  '18 Presents.jpg',
-  '20th Century Women.jpg',
-  'Avengers Infinity War.jpg',
-  '22Jul.jpg',
-  'Zoids Wild.jpg',
-];
+const sanitizeTitle = (title: string): string => {
+  return title
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-zA-Z0-9 ]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+};
+
+// Simulate being logged in for testing purposes
+const isLoggedIn = false; // Change to `false` for testing restricted access
 
 const LandingPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isVisible, setIsVisible] = useState(false);
+  const [featuredMovies, setFeaturedMovies] = useState<Movie[]>([]);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null); // Track selected movie
   const navigate = useNavigate();
 
   useEffect(() => {
     setIsVisible(true);
+
+    const loadFeatured = async () => {
+      try {
+        const data = await fetchMovies(20, 1, [], '');
+        if (Array.isArray(data.movies)) {
+          setFeaturedMovies(data.movies);
+        }
+      } catch (err) {
+        console.error('Failed to fetch featured movies:', err);
+      }
+    };
+
+    loadFeatured();
   }, []);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,16 +122,20 @@ const LandingPage: React.FC = () => {
         <div className="featured-content">
           <h2 className="section-title">Featured Originals</h2>
           <Slider {...settings} className="movie-carousel">
-            {moviePosters.map((poster, index) => (
-              <div key={index} className="movie-slide">
-                <img
-                  src={`/MoviePosters/${poster}`}
-                  alt={`Featured movie ${index + 1}`}
-                  className="movie-poster"
-                  loading="lazy"
-                />
-              </div>
-            ))}
+            {featuredMovies.map((movie) => {
+              const posterUrl = `https://moviepostersforintex.blob.core.windows.net/movieposters/${encodeURIComponent(sanitizeTitle(movie.title))}.jpg`;
+              return (
+                <div key={movie.show_id} className="movie-slide" onClick={() => setSelectedMovie(movie)}>
+                  <img
+                    src={posterUrl}
+                    alt={movie.title}
+                    className="movie-poster"
+                    loading="lazy"
+                    onError={(e) => (e.currentTarget as HTMLImageElement).src = "/Click.jpg"}
+                  />
+                </div>
+              );
+            })}
           </Slider>
         </div>
       </section>
@@ -136,6 +147,16 @@ const LandingPage: React.FC = () => {
           <p className="brand-tagline">Curated Cinema for the Discerning Viewer</p>
         </div>
       </section>
+
+      {/* Show preview popup for non-logged-in users */}
+      {selectedMovie && !isLoggedIn && (
+        <MoviePreviewPopup 
+          open={!!selectedMovie} 
+          onClose={() => setSelectedMovie(null)} 
+          selectedMovie={selectedMovie}
+        />
+      )}
+
     </div>
   );
 };

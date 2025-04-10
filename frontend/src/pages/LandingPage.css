@@ -62,7 +62,7 @@
 }
 
 .hero-text {
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
   animation: fadeInUp 1s ease-out;
 }
 
@@ -133,14 +133,14 @@
 /* Featured Section */
 .featured-section {
   width: 100vw;
-  padding: 4rem 0;
+  padding: 0.5rem 0;
   background-color: var(--bg-dark);
   margin: 0;
 }
 
 .featured-content {
   width: 100%;
-  max-width: 100%;
+  max-width: 1200px; /* or 1100px, same as .hero-content */
   margin: 0 auto;
   padding: 0 2rem;
 }
@@ -158,19 +158,24 @@
 }
 
 .movie-slide {
-  padding: 0 0.5rem;
+  padding: 4px; /* space between posters */
+  display: flex;
+  justify-content: center;
 }
 
 .movie-poster {
-  width: 100%;
-  height: auto;
-  border-radius: 4px;
+  width: 180px;
+  height: 270px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease;
 }
 
 .movie-poster:hover {
   transform: scale(1.05);
 }
+
 
 /* Brand Section */
 .brand-section {
