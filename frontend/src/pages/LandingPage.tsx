@@ -33,6 +33,7 @@ const LandingPage: React.FC = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [email, setEmail] = useState('');
   const navigate = useNavigate(); // Hook for navigation
+  const [showCookieBanner, setShowCookieBanner] = useState(true);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -167,6 +168,44 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
+      {showCookieBanner && (
+  <div
+    style={{
+      position: 'fixed',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: '#222',
+      color: '#fff',
+      padding: '1rem',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      zIndex: 9999,
+      boxShadow: '0 -2px 5px rgba(0, 0, 0, 0.3)',
+      flexWrap: 'wrap',
+    }}
+  >
+    <p style={{ margin: 0 }}>
+      We use cookies to enhance your experience. By clicking “Enable Cookies,” you agree to our use of cookies.
+    </p>
+    <button
+      style={{
+        marginTop: '0.5rem',
+        padding: '0.5rem 1rem',
+        backgroundColor: '#ff4d4f',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+      }}
+      onClick={() => setShowCookieBanner(false)}
+    >
+      Enable Cookies
+    </button>
+  </div>
+)}
+
     </div>
   );
 };
