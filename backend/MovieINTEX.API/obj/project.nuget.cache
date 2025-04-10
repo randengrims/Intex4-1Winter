@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "LrnO78nXaDQ=",
+  "dgSpecHash": "jDcsD01RLhg=",
   "success": true,
-  "projectFilePath": "/Users/spencerbullock/Desktop/Intex2/backend/MovieINTEX.API/MovieINTEX.API.csproj",
+  "projectFilePath": "/Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/MovieINTEX.API.csproj",
   "expectedPackageFiles": [
     "/Users/spencerbullock/.nuget/packages/azure.core/1.38.0/azure.core.1.38.0.nupkg.sha512",
     "/Users/spencerbullock/.nuget/packages/azure.identity/1.11.4/azure.identity.1.11.4.nupkg.sha512",

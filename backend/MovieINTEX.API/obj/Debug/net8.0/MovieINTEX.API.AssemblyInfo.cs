@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MovieINTEX.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6bc655f95c168efceb60375502eadf24fed7da15")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bce551ac8fa2d4e8949a58b95232c4cfdf3a3d77")]
 [assembly: System.Reflection.AssemblyProductAttribute("MovieINTEX.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MovieINTEX.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

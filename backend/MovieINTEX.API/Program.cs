@@ -23,7 +23,7 @@ builder.Services.AddSwaggerGen(options =>
 
 // ? Database context configuration
 builder.Services.AddDbContext<MovieDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("MovieConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MovieConnection")));
 
 // ? CORS policy setup
 builder.Services.AddCors(options =>

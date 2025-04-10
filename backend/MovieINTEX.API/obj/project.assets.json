@@ -4763,11 +4763,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/spencerbullock/Desktop/Intex2/backend/MovieINTEX.API/MovieINTEX.API.csproj",
+      "projectUniqueName": "/Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/MovieINTEX.API.csproj",
       "projectName": "MovieINTEX.API",
-      "projectPath": "/Users/spencerbullock/Desktop/Intex2/backend/MovieINTEX.API/MovieINTEX.API.csproj",
+      "projectPath": "/Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/MovieINTEX.API.csproj",
       "packagesPath": "/Users/spencerbullock/.nuget/packages/",
-      "outputPath": "/Users/spencerbullock/Desktop/Intex2/backend/MovieINTEX.API/obj/",
+      "outputPath": "/Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/spencerbullock/.nuget/NuGet/NuGet.Config"
