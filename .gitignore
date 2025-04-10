@@ -1,0 +1,32 @@
+# Node
+node_modules/
+dist/
+build/
+
+# React
+*.log
+.env
+*.env.local
+
+# System
+.DS_Store
+Thumbs.db
+
+# Visual Studio & .NET
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Vite
+.vite/
+
+# JetBrains IDEs (WebStorm, Rider, etc.)
+.idea/
+*.iml
+.shelf/
+
+# Compiled output
+*.out
+*.tsbuildinfo
