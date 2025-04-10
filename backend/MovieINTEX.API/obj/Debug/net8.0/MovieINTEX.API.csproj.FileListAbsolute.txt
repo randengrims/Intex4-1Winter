@@ -461,4 +461,3 @@ C:\Users\rande\Documents\Randen's College Stuff\Intex2\MovieIntex\Intex4-1Winter
 C:\Users\rande\Documents\Randen's College Stuff\Intex2\MovieIntex\Intex4-1Winter\backend\MovieINTEX.API\obj\Debug\net8.0\MovieINT.CFB74C34.Up2Date
 C:\Users\rande\Documents\Randen's College Stuff\Intex2\MovieIntex\Intex4-1Winter\backend\MovieINTEX.API\obj\Debug\net8.0\MovieINTEX.API.genruntimeconfig.cache
 C:\Users\rande\Documents\Randen's College Stuff\Intex2\MovieIntex\Intex4-1Winter\backend\MovieINTEX.API\obj\Debug\net8.0\ref\MovieINTEX.API.dll
-C:\Users\rande\Documents\Randen's College Stuff\Intex2\MovieIntex\Intex4-1Winter\backend\MovieINTEX.API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

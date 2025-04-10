@@ -1,24 +1,48 @@
 import React, { useState } from 'react';
 import './LoginPage.css';
-import PublicHeader from '../components/PublicHeader'; // Import your header component
+import PublicHeader from '../components/PublicHeader';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [errorVisible, setErrorVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorVisible(true); // Show error message
-    setTimeout(() => setErrorVisible(false), 3000); // Hide after 3 seconds
+    setErrorVisible(false);
+    setLoading(true);
+
+    try {
+      const response = await fetch('https://localhost:5000/auth/login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, rememberMe: true }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      // Login successful
+      navigate('/homepage'); // Change this route if needed
+    } catch (error) {
+      setErrorVisible(true);
+      setTimeout(() => setErrorVisible(false), 3000);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className='login-body'>
       <div className='login-container'>
-        {/* Public Header */}
         <PublicHeader />
         <h2>Sign In</h2>
         <form onSubmit={handleSubmit}>
-          {/* Email Field */}
           <div className='mb-3'>
             <label htmlFor='email' className='form-label'>
               Email
@@ -28,13 +52,14 @@ const LoginPage: React.FC = () => {
               className='form-control'
               id='email'
               name='email'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               autoComplete='email'
               placeholder='Enter your email'
               required
             />
           </div>
 
-          {/* Password Field */}
           <div className='mb-3'>
             <label htmlFor='password' className='form-label'>
               Password
@@ -44,36 +69,30 @@ const LoginPage: React.FC = () => {
               className='form-control'
               id='password'
               name='password'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               autoComplete='current-password'
               placeholder='Enter your password'
               required
             />
           </div>
 
-          {/* Submit Button */}
-          <button type='submit' className='btn-login btn-goldenrod'>
-            Sign In
+          <button
+            type='submit'
+            className='btn-login btn-goldenrod'
+            disabled={loading}
+          >
+            {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 
-        {/* Social Media Buttons Container */}
         <div className='social-buttons'>
-          {/* Google Sign-In */}
-          <button className='btn-social btn-google'>
-            <span className='icon'>{/* Google icon can be added here */}</span>
-            Sign In with Google
-          </button>
-
-          {/* Facebook Sign-In */}
+          <button className='btn-social btn-google'>Sign In with Google</button>
           <button className='btn-social btn-facebook'>
-            <span className='icon'>
-              {/* Facebook icon can be added here */}
-            </span>
             Sign In with Facebook
           </button>
         </div>
 
-        {/* Error Message */}
         <p className={`error ${errorVisible ? 'opacity-100' : 'opacity-0'}`}>
           Invalid credentials. Please try again.
         </p>
