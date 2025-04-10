@@ -1,82 +1,70 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
-import PublicHeader from '../components/PublicHeader'; // Import your header component
+import PublicHeader from '../components/PublicHeader';
 
 const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorVisible(true); // Show error message
-    setTimeout(() => setErrorVisible(false), 3000); // Hide after 3 seconds
+    // Add your login logic here
+    setErrorVisible(true);
+    setTimeout(() => setErrorVisible(false), 3000);
   };
 
   return (
-    <div className='login-body'>
-      <div className='login-container'>
-        {/* Public Header */}
-        <PublicHeader />
-        <h2>Sign In</h2>
-        <form onSubmit={handleSubmit}>
-          {/* Email Field */}
-          <div className='mb-3'>
-            <label htmlFor='email' className='form-label'>
-              Email
-            </label>
-            <input
-              type='email'
-              className='form-control'
-              id='email'
-              name='email'
-              autoComplete='email'
-              placeholder='Enter your email'
-              required
-            />
-          </div>
-
-          {/* Password Field */}
-          <div className='mb-3'>
-            <label htmlFor='password' className='form-label'>
-              Password
-            </label>
-            <input
-              type='password'
-              className='form-control'
-              id='password'
-              name='password'
-              autoComplete='current-password'
-              placeholder='Enter your password'
-              required
-            />
-          </div>
-
-          {/* Submit Button */}
-          <button type='submit' className='btn-login btn-goldenrod'>
-            Sign In
-          </button>
-        </form>
-
-        {/* Social Media Buttons Container */}
-        <div className='social-buttons'>
-          {/* Google Sign-In */}
-          <button className='btn-social btn-google'>
-            <span className='icon'>{/* Google icon can be added here */}</span>
-            Sign In with Google
-          </button>
-
-          {/* Facebook Sign-In */}
-          <button className='btn-social btn-facebook'>
-            <span className='icon'>
-              {/* Facebook icon can be added here */}
-            </span>
-            Sign In with Facebook
-          </button>
+    <div className="login-body">
+      <PublicHeader />
+      <div className="login-container">
+        <div className="login-form-wrapper">
+          <h2>Sign In</h2>
+          <form className="login-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email or phone number"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                required
+              />
+            </div>
+            <button type="submit" className="login-btn">
+              Sign In
+            </button>
+            <div className="remember-me">
+              <input
+                type="checkbox"
+                id="remember"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              <label htmlFor="remember">Remember me</label>
+            </div>
+            <p className="help-text">
+              Need help?{' '}
+              <a href="#" className="signup-link">
+                Sign up now
+              </a>
+            </p>
+          </form>
+          <p className={`error ${errorVisible ? 'opacity-100' : 'opacity-0'}`}>
+            Invalid email or password. Please try again.
+          </p>
         </div>
-
-        {/* Error Message */}
-        <p className={`error ${errorVisible ? 'opacity-100' : 'opacity-0'}`}>
-          Invalid credentials. Please try again.
-        </p>
       </div>
     </div>
   );
