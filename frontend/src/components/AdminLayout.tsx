@@ -1,44 +1,44 @@
 import { useState } from 'react';
-import AdminSidebar from '../components/AdminSidebar'; // You’ll create this next
+import AdminSidebar from '../components/AdminSidebar';
 import '../components/admin-styles/admin-layout.css';
 
 interface AdminLayoutProps {
-  theme: string;
-  setTheme: (theme: string) => void;
+  theme: 'light' | 'dark';
+  setTheme: (theme: 'light' | 'dark') => void;
   children: React.ReactNode;
 }
 
 const AdminLayout = ({ theme, setTheme, children }: AdminLayoutProps) => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true); // Sidebar open by default for dev
 
   const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
   const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
 
   return (
-    <div data-theme={theme}>
-      <div className="admin-wrapper">
-        <button className="sidebar-toggle" onClick={toggleSidebar}>
-          {isSidebarCollapsed ? '☰' : '×'}
-        </button>
+    <div className="admin-wrapper" data-theme={theme}>
 
-        <div
-          className={`sidebar-overlay ${!isSidebarCollapsed ? 'visible' : ''}`}
-          onClick={toggleSidebar}
-        />
+      <AdminSidebar
+        isSidebarCollapsed={isSidebarCollapsed}
+        toggleSidebar={toggleSidebar}
+        theme={theme}
+        toggleTheme={toggleTheme}
+      />
 
-        <AdminSidebar
-          isSidebarCollapsed={isSidebarCollapsed}
-          toggleSidebar={toggleSidebar}
-          theme={theme}
-          toggleTheme={toggleTheme}
-        />
+      <button className="sidebar-toggle" onClick={toggleSidebar}>
+        {isSidebarCollapsed ? '☰' : '×'}
+      </button>
 
-        <main className={`main-content ${!isSidebarCollapsed ? 'sidebar-visible' : ''}`}>
-          {children}
-        </main>
-      </div>
+      <div
+        className={`sidebar-overlay ${!isSidebarCollapsed ? 'visible' : ''}`}
+        onClick={toggleSidebar}
+      />
+
+      <main className={`main-content ${!isSidebarCollapsed ? 'sidebar-visible' : ''}`}>
+        {children}
+      </main>
     </div>
   );
 };
 
 export default AdminLayout;
+

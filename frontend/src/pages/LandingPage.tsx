@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Slider from 'react-slick';
 import './LandingPage.css';
-import PublicHeader from '../components/PublicHeader'; // Import your header component
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
@@ -30,36 +29,20 @@ const moviePosters = [
 ];
 
 const LandingPage: React.FC = () => {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [email, setEmail] = useState('');
-  const navigate = useNavigate(); // Hook for navigation
+  const [isVisible, setIsVisible] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
 
   const handleGetStarted = () => {
-    // Navigate to the sign-up page, passing the email in state
     navigate('/sign-up', { state: { email } });
-  };
-
-  const faqs = [
-    {
-      question: 'How do I sign up?',
-      answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    },
-    {
-      question: 'What types of movies are available?',
-      answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    },
-    {
-      question: 'How does the recommendation system work?',
-      answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    },
-  ];
-
-  const toggleFAQ = (index: number) => {
-    setExpandedIndex(index === expandedIndex ? null : index);
   };
 
   const settings = {
@@ -75,48 +58,70 @@ const LandingPage: React.FC = () => {
     draggable: true,
     swipeToSlide: true,
     arrows: false,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 4,
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 3,
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 2,
+        }
+      }
+    ]
   };
 
   return (
-    <div className='landing-page container-fluid'>
-      {/* Public Header */}
-      <PublicHeader />
-
+    <div className={`landing-page ${isVisible ? 'visible' : ''}`}>
       {/* Hero Section */}
-      <header className='hero bg-dark text-light'>
-        <div className='hero-overlay' />
-        <div className='hero-content text-center container'>
-          <h1 className='display-4 fw-bold'>
-            Unlimited movies, TV shows, and more.
-          </h1>
-          <p className='lead'>Watch anywhere. Cancel anytime.</p>
-          <div className='cta d-flex justify-content-center mt-4'>
+      <section className="hero">
+        <div className="hero-overlay" />
+        <div className="hero-content">
+          <div className="hero-text">
+            <h1 className="hero-title">Stream Bold. Discover Niche.</h1>
+            <p className="hero-subtitle">Your Home for Underrated Cinema</p>
+          </div>
+          <div className="cta-container">
             <input
-              type='email'
+              type="email"
               value={email}
               onChange={handleEmailChange}
-              placeholder='Email address'
-              className='form-control me-2'
-              style={{ maxWidth: '300px' }}
+              placeholder="Enter your email"
+              className="email-input"
+              aria-label="Email address"
             />
-            <button className='btn btn-danger' onClick={handleGetStarted}>
+            <button 
+              className="cta-button"
+              onClick={handleGetStarted}
+              aria-label="Get Started"
+            >
               Get Started
             </button>
           </div>
         </div>
-      </header>
+      </section>
 
-      {/* Carousel Section */}
-      <section className='carousel-section bg-black py-5'>
-        <div className='container text-light'>
-          <h2 className='mb-4'>Featured Originals</h2>
-          <Slider {...settings}>
+      {/* Featured Section */}
+      <section className="featured-section">
+        <div className="featured-content">
+          <h2 className="section-title">Featured Originals</h2>
+          <Slider {...settings} className="movie-carousel">
             {moviePosters.map((poster, index) => (
-              <div key={index} className='px-2'>
+              <div key={index} className="movie-slide">
                 <img
                   src={`/MoviePosters/${poster}`}
-                  alt={`Movie Poster ${index + 1}`}
-                  className='img-fluid rounded'
+                  alt={`Featured movie ${index + 1}`}
+                  className="movie-poster"
+                  loading="lazy"
                 />
               </div>
             ))}
@@ -124,46 +129,11 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className='faq bg-light py-5'>
-        <div className='container'>
-          <h2 className='mb-4'>Frequently Asked Questions</h2>
-          <div className='accordion'>
-            {faqs.map((faq, index) => (
-              <div key={index} className='faq-item mb-3'>
-                <div
-                  className='faq-question'
-                  onClick={() => toggleFAQ(index)}
-                  style={{
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    color: '#333',
-                    backgroundColor: '#f8f9fa',
-                    padding: '1rem',
-                    borderRadius: '4px',
-                  }}
-                >
-                  {faq.question}
-                  <span style={{ float: 'right' }}>
-                    {expandedIndex === index ? '-' : '+'}
-                  </span>
-                </div>
-                {expandedIndex === index && (
-                  <div
-                    className='faq-answer'
-                    style={{
-                      backgroundColor: '#e9ecef',
-                      marginTop: '0.5rem',
-                      padding: '1rem',
-                      borderRadius: '4px',
-                    }}
-                  >
-                    {faq.answer}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+      {/* Brand Section */}
+      <section className="brand-section">
+        <div className="brand-content">
+          <h2 className="brand-title">CineNiche</h2>
+          <p className="brand-tagline">Curated Cinema for the Discerning Viewer</p>
         </div>
       </section>
     </div>

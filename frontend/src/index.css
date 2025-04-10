@@ -24,10 +24,94 @@
   --shadow-color: rgba(0, 0, 0, 0.3);
 }
 
+/* Reset and base styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+}
+
+/* Global layout styles */
+.app-container {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+
+/* Utility classes for full viewport coverage */
+.full-viewport {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+}
+
+.full-width {
+  width: 100%;
+  max-width: 100%;
+}
+
+.full-height {
+  height: 100%;
+  min-height: 100vh;
+}
+
+/* Remove default margins from common elements */
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+}
+
+/* Ensure images and media don't cause overflow */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Remove default list styles */
+ul, ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Ensure form elements don't have default margins */
+input, button, textarea, select {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+}
+
+/* Remove default button styles */
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Ensure links don't have default text decoration */
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
 body {

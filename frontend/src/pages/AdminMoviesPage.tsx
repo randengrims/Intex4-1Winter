@@ -5,7 +5,7 @@ import Pagination from '../components/pagination';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import '../components/admin-styles/admin-layout.css';
+import { useSearchParams } from 'react-router-dom';
 
 interface Toast {
   id: number;
@@ -20,12 +20,14 @@ const AdminMoviesPage = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [pageNum, setPageNum] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
-  const [showForm, setShowForm] = useState(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const editFormRef = useRef<HTMLDivElement>(null);
   const toastTimeoutRef = useRef<number | undefined>(undefined);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const showForm = searchParams.get('add') === 'true';
 
   const addToast = (message: string, type: 'success' | 'error') => {
     const id = Date.now();
@@ -77,26 +79,27 @@ const AdminMoviesPage = () => {
   };
 
   if (loading) return <div className="loading-spinner" />;
-
   if (error) return <p className="error-message">Error: {error}</p>;
 
   return (
     <>
-      <div className="content-header">
-        <h1>Movies</h1>
-        <button className="btn btn-add" onClick={() => setShowForm(true)}>Add Movie</button>
+      <div className="page-header">
+        <div className="page-header-text">
+          <h1>Movies</h1>
+          <p className="subtitle">Browse, edit, and manage all movies in your catalog.</p>
+        </div>
       </div>
 
       {showForm ? (
         <NewMovieForm
           onSuccess={() => {
-            setShowForm(false);
+            setSearchParams({});
             fetchMovies(pageSize, pageNum, [], '').then((data) => {
               setMovies(data.movies);
               addToast('Movie added successfully', 'success');
             });
           }}
-          onCancel={() => setShowForm(false)}
+          onCancel={() => setSearchParams({})}
         />
       ) : editingMovie ? (
         <EditMovieForm
@@ -115,7 +118,7 @@ const AdminMoviesPage = () => {
           <div className="empty-state-icon">🎬</div>
           <h2 className="empty-state-message">No movies found</h2>
           <p>Add your first movie to get started</p>
-          <button className="btn btn-add empty-state-action" onClick={() => setShowForm(true)}>
+          <button className="btn btn-add empty-state-action" onClick={() => setSearchParams({ add: 'true' })}>
             Add Movie
           </button>
         </div>
@@ -168,7 +171,6 @@ const AdminMoviesPage = () => {
                         className="btn btn-edit"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setShowForm(false);
                           setEditingMovie(m);
                         }}
                       >
@@ -187,15 +189,50 @@ const AdminMoviesPage = () => {
                     </td>
                   </tr>
                   {expandedRowId === m.show_id && (
-                    <tr className="expanded-detail-row">
-                      <td colSpan={12}>
-                        <div className="expanded-card">
-                          <h3 className="expanded-title">{m.title}</h3>
-                          <p><strong>Description:</strong> {m.description}</p>
+                  <tr className="expanded-detail-row">
+                    <td colSpan={12}>
+                      <div className="expanded-card">
+                        {/* Centered Title with Optional Director */}
+                        <h3 className="expanded-title" style={{ textAlign: 'center' }}>
+                          {m.title} {m.director && <span style={{ fontWeight: 400 }}>by {m.director}</span>}
+                        </h3>
+
+                        {/* Row 1 */}
+                        <div className="expanded-grid-row">
+                          <div className="expanded-block"><strong>Type:</strong> {m.type}</div>
+                          <div className="expanded-block"><strong>Country:</strong> {m.country || '—'}</div>
+                          <div className="expanded-block"><strong>Release Year:</strong> {m.release_year}</div>
                         </div>
-                      </td>
-                    </tr>
-                  )}
+
+                        {/* Row 2: Rating, Genres, Duration */}
+                        <div className="expanded-grid-row">
+                          <div className="expanded-block"><strong>Rating:</strong> {m.rating}</div>
+                          <div className="expanded-block"><strong>Genres:</strong> {
+                            Object.entries(m)
+                              .filter(([, value]) => typeof value === 'boolean' && value)
+                              .map(([genre]) => genre)
+                              .join(', ') || '—'
+                          }</div>
+                          <div className="expanded-block"><strong>Duration:</strong> {m.duration}</div>
+                        </div>
+
+                        {/* Cast */}
+                        {m.cast && (
+                          <div className="expanded-block">
+                            <strong>Cast:</strong> {m.cast}
+                          </div>
+                        )}
+
+                        {/* Description */}
+                        {m.description && (
+                          <div className="expanded-block">
+                            <strong>Description:</strong> {m.description}
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
                 </>
               ))}
             </tbody>
@@ -221,6 +258,7 @@ const AdminMoviesPage = () => {
           </div>
         ))}
       </div>
+      <div style={{ height: '3rem' }} />
     </>
   );
 };
